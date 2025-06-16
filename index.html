@@ -1,0 +1,3393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zenora - Advanced Digital Ecosystem & Solutions</title>
+    <meta name="description" content="Zenora offers cutting-edge web development, innovative digital portals, smart business cards, and health solutions. Build your online empire with Zenora's mobile-first, SEO-optimized digital ecosystem.">
+    <!-- Favicon placeholder -->
+    <link rel="icon" href="https://placehold.co/32x32/1a1a2e/e0e0e0?text=ZN" type="image/x-icon">
+    <!-- Google Fonts for a modern, slightly futuristic look (Inter for body, Orbitron for headings) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Three.js for 3D backgrounds/Hologram Loader -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Chart.js for Dashboard UI -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- face-api.js for facial recognition (models will be loaded from CDN path if available) -->
+    <!-- Note: face-api.js models usually need to be served from the same origin or a CORS-enabled CDN. -->
+    <!-- For this demo, we'll assume they're accessible. In a real app, host these yourself. -->
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+    <style>
+        /* CSS Variables for Sci-Fi Theme */
+        :root {
+            --bg-dark: #0A0A1F; /* Very dark blue/black background */
+            --bg-medium: #1A1A2E; /* Slightly lighter dark blue for cards/sections */
+            --bg-light: #2A2A4E; /* Even lighter for secondary elements */
+            --accent-blue: #00BFFF; /* Deep Sky Blue - vibrant accent */
+            --accent-purple: #8A2BE2; /* Blue Violet - secondary vibrant accent */
+            --text-light: #E0E0E0; /* Light gray for general text */
+            --text-medium: #A0A0A0; /* Medium gray for descriptions */
+            --text-dark: #333333; /* Dark text on light backgrounds (if any) */
+            --border-glow: #00CFFF; /* Cyan for glowing borders */
+            --error-red: #FF4136; /* Red for error messages */
+            --success-green: #2ECC40; /* Green for success messages */
+            /* Spacing */
+            --spacing-xs: 5px;
+            --spacing-sm: 10px;
+            --spacing-md: 20px;
+            --spacing-lg: 40px;
+            --spacing-xl: 80px;
+            /* Border Radius */
+            --border-radius-sm: 5px;
+            --border-radius-md: 10px;
+            --border-radius-lg: 15px;
+            /* Transition */
+            --transition-speed: 0.3s;
+            --transition-ease: ease-in-out;
+
+            /* Dark/Light Mode Variables */
+            --mode-bg-dark: var(--bg-dark);
+            --mode-bg-medium: var(--bg-medium);
+            --mode-bg-light: var(--bg-light);
+            --mode-text-light: var(--text-light);
+            --mode-text-medium: var(--text-medium);
+            --mode-border-glow: var(--border-glow);
+        }
+
+        /* Light mode adjustments */
+        body.light-mode {
+            --mode-bg-dark: #F0F0F0;
+            --mode-bg-medium: #FFFFFF;
+            --mode-bg-light: #E0E0E0;
+            --mode-text-light: #333333;
+            --mode-text-medium: #666666;
+            --mode-border-glow: #007bff; /* Blue for light mode glow */
+            color: var(--mode-text-light);
+            background-color: var(--mode-bg-dark);
+        }
+
+        body.light-mode .header {
+            background-color: var(--mode-bg-medium);
+            border-bottom-color: rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-mode .header .logo {
+            color: var(--accent-blue);
+            text-shadow: none;
+        }
+
+        body.light-mode .nav-links a,
+        body.light-mode .cart-icon {
+            color: var(--mode-text-light);
+        }
+
+        body.light-mode .nav-links a:hover {
+            color: var(--accent-blue);
+            text-shadow: none;
+        }
+
+        body.light-mode .hero-section,
+        body.light-mode .testimonials-section {
+            background-color: var(--mode-bg-medium);
+        }
+
+        body.light-mode .section-title,
+        body.light-mode h1,
+        body.light-mode h2,
+        body.light-mode h3,
+        body.light-mode h4 {
+            color: var(--accent-blue);
+            text-shadow: none;
+        }
+
+        body.light-mode .section-title::after {
+            background-color: var(--accent-blue);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        body.light-mode .category-card,
+        body.light-mode .product-card,
+        body.light-mode .add-on-card,
+        body.light-mode .social-icon-card,
+        body.light-mode .client-card,
+        body.light-mode .modal-content,
+        body.light-mode .sidebar,
+        body.light-mode .product-tabs,
+        body.light-mode .pdp-container,
+        body.light-mode .cart-items,
+        body.light-mode .cart-summary,
+        body.light-mode .add-on-features-section,
+        body.light-mode .accordion-item {
+            background: var(--mode-bg-medium);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            border-color: rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-mode .category-card:hover,
+        body.light-mode .product-card:hover,
+        body.light-mode .add-on-card:hover,
+        body.light-mode .social-icon-card:hover,
+        body.light-mode .client-card:hover {
+            background: var(--mode-bg-light);
+            border-color: var(--accent-blue);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        body.light-mode .btn-secondary {
+            color: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        body.light-mode .btn-secondary:hover {
+            background-color: rgba(0, 123, 255, 0.1);
+            color: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        body.light-mode .comparison-table th {
+            background-color: rgba(0, 123, 255, 0.1);
+            color: var(--accent-blue);
+        }
+
+        body.light-mode .comparison-table tr:nth-child(even) {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+        body.light-mode .footer {
+            background-color: var(--mode-bg-medium);
+            border-top-color: rgba(0, 0, 0, 0.1);
+            box-shadow: inset 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-mode .footer-bottom-text {
+            border-top-color: rgba(0, 0, 0, 0.1);
+            color: var(--mode-text-medium);
+        }
+
+        body.light-mode .modal-content input,
+        body.light-mode .modal-content textarea,
+        body.light-mode .sorting-options select,
+        body.light-mode .cart-item-actions input[type="number"] {
+            background-color: var(--mode-bg-light);
+            color: var(--mode-text-light);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-mode .modal-content input:focus,
+        body.light-mode .modal-content textarea:focus,
+        body.light-mode .sorting-options select:focus,
+        body.light-mode .cart-item-actions input[type="number"]:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+        }
+
+        /* Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            scroll-behavior: smooth; /* Smooth scrolling for navigation */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--mode-bg-dark);
+            color: var(--mode-text-light);
+            line-height: 1.6;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+            transition: background-color var(--transition-speed) var(--transition-ease), color var(--transition-speed) var(--transition-ease);
+        }
+        #backgroundCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1; /* Place behind content */
+            pointer-events: none; /* Allow clicks to pass through */
+            opacity: 0.7; /* Subtle background */
+            transition: opacity 1s ease-in-out;
+        }
+        /* General Layout */
+        .container {
+            width: 96%; /* Increased for wider content area */
+            max-width: 1300px; /* Increased max-width */
+            margin: 0 auto;
+            padding: var(--spacing-md);
+        }
+        .p-lg { padding: var(--spacing-lg); }
+        .mt-sm { margin-top: var(--spacing-sm); }
+        .mt-md { margin-top: var(--spacing-md); }
+        .mt-lg { margin-top: var(--spacing-lg); }
+        .mb-sm { margin-bottom: var(--spacing-sm); }
+        .mb-md { margin-bottom: var(--spacing-md); }
+        .mb-lg { margin-bottom: var(--spacing-lg); }
+        .text-center { text-align: center; }
+        .hidden { display: none !important; }
+        /* Typography */
+        h1, h2, h3, h4 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent-blue);
+            margin-bottom: var(--spacing-md);
+            text-shadow: 0 0 5px rgba(0, 191, 255, 0.5); /* Subtle glow effect */
+            transition: color var(--transition-speed) var(--transition-ease), text-shadow var(--transition-speed) var(--transition-ease);
+        }
+        h1 { font-size: 2.8em; }
+        h2 { font-size: 2.2em; }
+        h3 { font-size: 1.8em; }
+        h4 { font-size: 1.4em; }
+        p {
+            color: var(--mode-text-medium);
+            margin-bottom: var(--spacing-sm);
+            transition: color var(--transition-speed) var(--transition-ease);
+        }
+        a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            transition: color var(--transition-speed) var(--transition-ease);
+        }
+        a:hover {
+            color: var(--accent-purple);
+            text-decoration: underline;
+        }
+        .section-title {
+            text-align: center;
+            margin-bottom: var(--spacing-lg);
+            font-size: 2.5em;
+            color: var(--accent-blue);
+            position: relative;
+            padding-bottom: 10px;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: var(--accent-blue);
+            box-shadow: 0 0 10px var(--border-glow);
+            border-radius: var(--border-radius-sm);
+            transition: background-color var(--transition-speed) var(--transition-ease), box-shadow var(--transition-speed) var(--transition-ease);
+        }
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--border-radius-md);
+            text-transform: uppercase;
+            font-weight: 600;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all var(--transition-speed) var(--transition-ease);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            font-family: 'Orbitron', sans-serif;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple));
+            color: var(--text-light);
+            border-color: var(--accent-blue);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-blue));
+            border-color: var(--border-glow);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 20px rgba(0, 191, 255, 0.4);
+        }
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+        .btn-secondary:hover {
+            background-color: rgba(0, 191, 255, 0.1);
+            color: var(--border-glow);
+            border-color: var(--border-glow);
+            transform: translateY(-2px) scale(1.02);
+        }
+        .btn-remove {
+            background-color: var(--error-red);
+            color: var(--text-light);
+            border-color: var(--error-red);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            font-size: 0.9em;
+            text-transform: capitalize;
+        }
+        .btn-remove:hover {
+            background-color: #E21B00;
+            border-color: #E21B00;
+            transform: translateY(-1px) scale(1.01);
+        }
+        .btn-checkout {
+            width: 100%;
+            background: linear-gradient(90deg, #2ECC40, #17A2B8); /* Green to Teal gradient */
+            border-color: #2ECC40;
+            color: white;
+            font-size: 1.1em;
+            padding: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+        .btn-checkout:hover {
+            background: linear-gradient(90deg, #17A2B8, #2ECC40);
+            border-color: #17A2B8;
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 8px 25px rgba(46, 204, 64, 0.5);
+        }
+        .btn-add-to-cart {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: var(--border-radius-sm);
+            background-color: var(--accent-blue);
+            color: var(--text-light);
+            border: none;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color var(--transition-speed) var(--transition-ease), transform var(--transition-speed) var(--transition-ease);
+        }
+        .btn-add-to-cart:hover {
+            background-color: var(--border-glow);
+            transform: translateY(-2px);
+        }
+        /* Icons */
+        .icon-star, .icon-star-half, .icon-star-empty {
+            color: #FFD700; /* Gold color for stars */
+            font-size: 1.2em;
+            margin-right: 2px;
+        }
+        .icon-star-empty {
+            color: var(--mode-text-medium);
+            opacity: 0.5;
+        }
+        .icon-website-dev::before { content: '\f108'; font-family: 'Font Awesome 6 Free'; font-weight: 900; } /* Laptop icon */
+        .icon-digital-portal::before { content: '\f0e8'; font-family: 'Font Awesome 6 Free'; font-weight: 900; } /* Link/Chain icon */
+        .icon-business-card::before { content: '\f2c2'; font-family: 'Font Awesome 6 Free'; font-weight: 900; } /* Id card icon */
+        .icon-health::before { content: '\f440'; font-family: 'Font Awesome 6 Free'; font-weight: 900; } /* Heartbeat icon */
+        .icon-qr::before { content: '\f029'; font-family: 'Font Awesome 6 Free'; font-weight: 900; } /* QR code icon */
+        .icon-cloud::before { content: '\f0c2'; font-family: 'Font Awesome 6 Free'; font-weight: 900; } /* Cloud upload icon */
+        .icon-network::before { content: '\f6ff'; font-family: 'Font Awesome 6 Free'; font-weight: 900; } /* Network wired icon */
+        .icon-innovation::before { content: '\f0eb'; font-family: 'Font Awesome 6 Free'; font-weight: 900; } /* Lightbulb icon */
+        .icon-whatsapp::before { content: '\f232'; font-family: 'Font Awesome 6 Brands'; } /* WhatsApp icon */
+        .icon-youtube::before { content: '\f167'; font-family: 'Font Awesome 6 Brands'; } /* YouTube icon */
+        /* Stack Icons - Using FontAwesome for common dev tools/languages */
+        .icon-html::before { content: '\f13b'; font-family: 'Font Awesome 6 Brands'; color: #e34c26; } /* HTML5 */
+        .icon-css::before { content: '\f13c'; font-family: 'Font Awesome 6 Brands'; color: #264de4; } /* CSS3 */
+        .icon-js::before { content: '\f3b8'; font-family: 'Font Awesome 6 Brands'; color: #f7df1e; } /* JavaScript */
+        .icon-react::before { content: '\f41b'; font-family: 'Font Awesome 6 Brands'; color: #61dafb; } /* React */
+        .icon-firebase::before { content: '\f06d'; font-family: 'Font Awesome 6 Brands'; color: #ffca28; } /* Fire symbol, often used for Firebase */
+        .icon-vercel::before { content: '\f0ac'; font-family: 'Font Awesome 6 Free'; font-weight: 900; color: #000; background: #fff; border-radius: 50%; padding: 2px; } /* Globe, placeholder for Vercel */
+        .icon-github::before { content: '\f09b'; font-family: 'Font Awesome 6 Brands'; color: #fff; } /* GitHub */
+
+        /* Header */
+        .header {
+            background-color: var(--mode-bg-dark);
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid rgba(0, 191, 255, 0.1);
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8em;
+            color: var(--accent-blue);
+            font-weight: 700;
+            text-shadow: 0 0 8px rgba(0, 191, 255, 0.7);
+            margin-right: var(--spacing-md);
+            transition: color var(--transition-speed) var(--transition-ease), text-shadow var(--transition-speed) var(--transition-ease);
+        }
+        .nav-links {
+            display: flex;
+            gap: var(--spacing-md);
+            flex-grow: 1; /* Allow nav links to take available space */
+            justify-content: center;
+            margin: var(--spacing-sm) 0; /* Add some margin for smaller screens */
+        }
+        .nav-links a {
+            color: var(--mode-text-light);
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: var(--border-radius-sm);
+            transition: all var(--transition-speed) var(--transition-ease);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+        }
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--accent-purple);
+            transform: translateX(-100%);
+            transition: transform var(--transition-speed) var(--transition-ease);
+        }
+        .nav-links a:hover::before {
+            transform: translateX(0);
+        }
+        .nav-links a:hover {
+            color: var(--accent-blue);
+            text-shadow: 0 0 5px rgba(0, 191, 255, 0.3);
+        }
+        .header-icons {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-left: auto; /* Push icons to the right */
+        }
+        .cart-icon, .header-icon {
+            position: relative;
+            font-size: 1.5em;
+            color: var(--mode-text-light);
+            cursor: pointer;
+            transition: color var(--transition-speed) var(--transition-ease), transform var(--transition-speed) var(--transition-ease);
+            padding: 5px; /* Increase touch target */
+        }
+        .cart-icon:hover, .header-icon:hover {
+            color: var(--accent-blue);
+            transform: scale(1.1);
+        }
+        .cart-item-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--error-red);
+            color: white;
+            font-size: 0.7em;
+            font-weight: bold;
+            border-radius: 50%;
+            padding: 3px 6px;
+            min-width: 20px;
+            text-align: center;
+        }
+        /* Dark/Light Mode Toggle */
+        .theme-switch {
+            width: 50px;
+            height: 26px;
+            background-color: var(--bg-medium);
+            border-radius: 20px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: 1px solid var(--accent-blue);
+        }
+
+        .theme-switch.light-mode {
+            background-color: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        .theme-switch::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: var(--text-light);
+            border-radius: 50%;
+            transition: transform 0.3s;
+            /* SpaceX rocket icon for dark mode */
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L10 9H3L8 14L6 21L12 17L18 21L16 14L21 9H14L12 2Z" fill="%231A1A2E"/></svg>');
+            background-size: 80%;
+            background-position: center;
+            background-repeat: no-repeat;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .theme-switch.light-mode::before {
+            transform: translateX(24px);
+            /* Sun icon for light mode */
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c-.55 0-1 .45-1 1v1c0 .55.45 1 1 1s1-.45 1-1V3c0-.55-.45-1-1-1zm0 20c-.55 0-1-.45-1-1v-1c0-.55.45-1 1-1s1 .45 1 1v1c0 .55-.45 1-1 1zm8.29-15.3-.71-.71c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l.71.71c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41zM3.71 4.71c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l.71.71c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41zM21 12c0-.55-.45-1-1-1h-1c-.55 0-1 .45-1 1s.45 1 1 1h1c.55 0 1-.45 1-1zM4 12c0-.55-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1h1c.55 0 1-.45 1-1zM18.29 18.29c-.39-.39-1.02-.39-1.41 0l-.71.71c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l.71-.71c.39-.39.39-1.02 0-1.41zM5.71 17.58l-.71.71c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l.71-.71c.39-.39.39-1.02 0-1.41zM12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z"/></svg>');
+            background-color: #FFD700; /* Gold for sun */
+        }
+
+        /* Hero Section */
+        .hero-section {
+            position: relative;
+            height: 60vh; /* Adjust height for mobile visibility */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--mode-text-light);
+            text-align: center;
+            overflow: hidden; /* For carousel */
+            background-color: var(--mode-bg-medium);
+            border-bottom: 1px solid rgba(0, 191, 255, 0.1);
+            box-shadow: inset 0 -10px 20px rgba(0, 191, 255, 0.05);
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .hero-carousel {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+        }
+        .carousel-item {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: var(--spacing-md);
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smooth slide transition */
+            opacity: 0;
+            animation: fadeIn 0.8s forwards; /* Initial fade in */
+        }
+        .carousel-item.active {
+            opacity: 1;
+        }
+        .carousel-item h1 {
+            font-size: 2.5em;
+            margin-bottom: var(--spacing-sm);
+            color: var(--mode-text-light);
+            text-shadow: 0 0 15px var(--accent-blue);
+            max-width: 90%;
+        }
+        .carousel-item p {
+            font-size: 1.1em;
+            margin-bottom: var(--spacing-md);
+            color: var(--mode-text-medium);
+            max-width: 80%;
+        }
+        /* Specific carousel item backgrounds */
+        .carousel-item.item-1 { background-image: linear-gradient(rgba(10, 10, 31, 0.7), rgba(10, 10, 31, 0.7)), url('https://placehold.co/1200x600/007bff/ffffff?text=Digital+Empire'); }
+        .carousel-item.item-2 { background-image: linear-gradient(rgba(10, 10, 31, 0.7), rgba(10, 10, 31, 0.7)), url('https://placehold.co/1200x600/6f42c1/ffffff?text=Digital+Identity'); }
+        .carousel-item.item-3 { background-image: linear-gradient(rgba(10, 10, 31, 0.7), rgba(10, 10, 31, 0.7)), url('https://placehold.co/1200x600/28a745/ffffff?text=Connect+Smarter'); }
+        .carousel-dots {
+            position: absolute;
+            bottom: var(--spacing-md);
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--mode-text-medium);
+            cursor: pointer;
+            transition: background-color var(--transition-speed) var(--transition-ease), transform var(--transition-speed) var(--transition-ease);
+            border: 1px solid rgba(0, 191, 255, 0.3);
+        }
+        .dot.active {
+            background-color: var(--accent-blue);
+            transform: scale(1.2);
+            box-shadow: 0 0 8px var(--border-glow);
+        }
+        /* Category Shortcuts / Cards */
+        .category-shortcuts, .product-grid, .add-on-grid, .social-icons, .contact-details-grid, .client-grid {
+            display: grid;
+            gap: var(--spacing-md);
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            margin-top: var(--spacing-md);
+        }
+        .category-card, .product-card, .add-on-card, .social-icon-card, .client-card {
+            background-color: var(--mode-bg-medium);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius-lg);
+            text-align: center;
+            border: 1px solid rgba(138, 43, 226, 0.1); /* Subtle purple border */
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            transition: transform var(--transition-speed) var(--transition-ease), box-shadow var(--transition-speed) var(--transition-ease), background-color var(--transition-speed) var(--transition-ease), border-color var(--transition-speed) var(--transition-ease);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            text-decoration: none; /* For category-card as it's an anchor */
+        }
+        .category-card:hover, .product-card:hover, .add-on-card:hover, .social-icon-card:hover, .client-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(0, 191, 255, 0.4);
+            background-color: var(--mode-bg-light);
+            border-color: var(--mode-border-glow);
+        }
+        .category-card span, .social-icon-card i {
+            font-size: 3em;
+            color: var(--accent-blue);
+            margin-bottom: var(--spacing-sm);
+            text-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+            transition: color var(--transition-speed) var(--transition-ease), text-shadow var(--transition-speed) var(--transition-ease);
+        }
+        .category-card:hover span, .social-icon-card:hover i {
+            color: var(--accent-purple);
+        }
+        .category-card h3 {
+            margin-bottom: var(--spacing-xs);
+            color: var(--mode-text-light);
+            font-size: 1.5em;
+        }
+        .category-card p {
+            font-size: 0.9em;
+            color: var(--mode-text-medium);
+        }
+        /* Client Cards for Grid */
+        .client-card {
+            cursor: pointer;
+            text-align: left;
+            /* Ensure aspect ratio similar to product cards */
+            width: 100%;
+            height: auto; /* Allow height to adjust */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .client-card-image {
+            width: 100%;
+            height: 180px; /* Fixed height for consistency */
+            object-fit: cover;
+            border-radius: var(--border-radius-md);
+            margin-bottom: var(--spacing-sm);
+            border: 1px solid rgba(0, 191, 255, 0.1);
+        }
+        .client-card h3 {
+            font-size: 1.4em;
+            margin-bottom: var(--spacing-xs);
+            color: var(--mode-text-light);
+            text-shadow: none;
+            flex-shrink: 0; /* Prevent shrinking */
+        }
+        .client-card p {
+            font-size: 0.9em;
+            color: var(--mode-text-medium);
+            flex-grow: 1; /* Allow description to take space */
+            margin-bottom: var(--spacing-sm);
+        }
+        /* Product Cards for Grid */
+        .product-card-image {
+            width: 100%;
+            height: 200px; /* Fixed height for consistency */
+            object-fit: cover;
+            border-radius: var(--border-radius-md);
+            margin-bottom: var(--spacing-sm);
+            border: 1px solid rgba(0, 191, 255, 0.1);
+        }
+        .product-card-content {
+            padding: var(--spacing-sm); /* Keep this consistent, will adjust container */
+            text-align: left;
+            flex-grow: 1; /* Allows content to push actions to bottom */
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        .product-card h3 {
+            font-size: 1.4em;
+            margin-bottom: var(--spacing-xs);
+            color: var(--mode-text-light);
+            text-shadow: none;
+        }
+        .product-card .description-snippet {
+            font-size: 0.9em;
+            color: var(--mode-text-medium);
+            margin-bottom: var(--spacing-sm);
+            flex-grow: 1; /* Allows description to take space */
+        }
+        .product-card .rating {
+            margin-bottom: var(--spacing-sm);
+        }
+        .product-card-price {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin-bottom: var(--spacing-md);
+        }
+        .product-card-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+            justify-content: center;
+            width: 100%;
+            flex-wrap: wrap; /* Allow buttons to wrap on small screens */
+        }
+        .product-card-actions .btn {
+            flex-grow: 1; /* Distribute space evenly */
+            min-width: 120px; /* Ensure buttons don't get too small */
+        }
+        /* Testimonials Section (Now Marquee) */
+        .testimonials-section { /* Now used for 'Other Clients' on Client Detail Page */
+            background-color: var(--mode-bg-medium);
+            padding: var(--spacing-lg) 0;
+            border-top: 1px solid rgba(0, 191, 255, 0.1);
+            border-bottom: 1px solid rgba(0, 191, 255, 0.1);
+            box-shadow: inset 0 10px 20px rgba(0, 0, 0, 0.1), inset 0 -10px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden; /* Hide anything outside */
+            height: 220px; /* Increased height for better visibility on mobile */
+            display: flex;
+            align-items: center;
+            margin-top: var(--spacing-xl); /* Ensure spacing below other sections */
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .testimonials-section .section-title {
+            text-align: center;
+            margin-bottom: var(--spacing-md);
+            font-size: 2.5em;
+            color: var(--accent-blue);
+            position: absolute;
+            top: var(--spacing-md);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            width: calc(100% - var(--spacing-lg) * 2);
+            background-color: var(--mode-bg-medium);
+            padding-bottom: 10px;
+        }
+        .marquee-container {
+            position: absolute;
+            top: 90px; /* Adjusted top position to clear the title */
+            left: 0;
+            width: 100%;
+            height: calc(100% - 90px); /* Adjust height to fill remaining space */
+            overflow: hidden;
+        }
+        .marquee-inner {
+            display: flex;
+            width: fit-content; /* Allow content to dictate width */
+            animation: marquee-scroll linear infinite;
+            padding: 0 var(--spacing-md); /* Padding to ensure content is not cut off */
+        }
+        .testimonial-item-marquee {
+            flex-shrink: 0; /* Prevent items from shrinking */
+            width: 400px; /* Fixed width for each testimonial item */
+            text-align: center;
+            padding: var(--spacing-md);
+            margin: 0 var(--spacing-md);
+            background-color: rgba(42, 42, 78, 0.4); /* Slightly lighter for marquee items */
+            border-radius: var(--border-radius-md);
+            border: 1px solid rgba(138, 43, 226, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        body.light-mode .testimonial-item-marquee {
+            background-color: rgba(220, 220, 220, 0.7);
+            border-color: rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .testimonial-item-marquee .testimonial-text {
+            font-style: italic;
+            font-size: 1em;
+            color: var(--mode-text-light);
+            margin-bottom: var(--spacing-sm);
+            white-space: normal; /* Allow text to wrap */
+        }
+        .testimonial-item-marquee .testimonial-author {
+            font-weight: 600;
+            color: var(--accent-blue);
+            font-size: 0.9em;
+        }
+        @keyframes marquee-scroll {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); } /* Scrolls half of the duplicated content */
+        }
+        /* Product Listing Page (PLP) */
+        .breadcrumbs {
+            font-size: 0.9em;
+            color: var(--mode-text-medium);
+            margin-bottom: var(--spacing-md);
+        }
+        .product-listing-layout {
+            display: flex;
+            gap: var(--spacing-md);
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+        .sidebar {
+            flex: 1;
+            max-width: 250px;
+            background-color: var(--mode-bg-medium);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius-md);
+            border: 1px solid rgba(138, 43, 226, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .sidebar h3 {
+            color: var(--accent-blue);
+            margin-bottom: var(--spacing-md);
+            text-shadow: none;
+        }
+        .filter-group {
+            margin-bottom: var(--spacing-md);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 1px dashed rgba(0, 191, 255, 0.1);
+        }
+        .filter-group:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .filter-group h4 {
+            color: var(--mode-text-light);
+            margin-bottom: var(--spacing-sm);
+            font-size: 1.1em;
+        }
+        .filter-group label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            cursor: pointer;
+            color: var(--mode-text-medium);
+        }
+        .filter-group input[type="radio"],
+        .filter-group input[type="checkbox"] {
+            margin-right: 8px;
+            accent-color: var(--accent-blue); /* Style radio/checkbox */
+        }
+        .product-content {
+            flex: 4;
+            min-width: 300px; /* Ensure content area doesn't shrink too much */
+        }
+        .sorting-options {
+            text-align: right;
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .sorting-options label {
+            color: var(--mode-text-light);
+            font-weight: 600;
+        }
+        .sorting-options select {
+            padding: 8px 12px;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--accent-blue);
+            background-color: rgba(30, 30, 60, 0.8);
+            color: var(--mode-text-light);
+            font-family: 'Inter', sans-serif;
+            appearance: none; /* Remove default arrow */
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%2300BFFF" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 8px top 50%;
+            background-size: 16px auto;
+            cursor: pointer;
+            transition: border-color var(--transition-speed) var(--transition-ease), background-color var(--transition-speed) var(--transition-ease);
+        }
+        body.light-mode .sorting-options select {
+            background-color: var(--mode-bg-light);
+            border-color: rgba(0, 0, 0, 0.1);
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%23007bff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+        }
+        .sorting-options select:hover {
+            border-color: var(--mode-border-glow);
+        }
+        /* Product Detail Page (PDP) */
+        .pdp-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+            background-color: var(--mode-bg-medium);
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-lg);
+            border: 1px solid rgba(0, 191, 255, 0.1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .pdp-image-gallery {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+            align-items: center;
+        }
+        .main-product-image, .client-detail-main-image {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            border-radius: var(--border-radius-md);
+            border: 2px solid var(--accent-blue);
+            box-shadow: 0 0 15px rgba(0, 191, 255, 0.6);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+        }
+        .main-product-image:hover, .client-detail-main-image:hover {
+            transform: scale(1.01);
+        }
+        .thumbnail-images {
+            display: flex;
+            gap: var(--spacing-sm);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .thumbnail-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: var(--border-radius-sm);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all var(--transition-speed) var(--transition-ease);
+        }
+        .thumbnail-image.active,
+        .thumbnail-image:hover {
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 10px rgba(138, 43, 226, 0.7);
+            transform: scale(1.05);
+        }
+        .pdp-details {
+            flex: 2;
+            min-width: 300px;
+        }
+        .pdp-details h1 {
+            font-size: 2.5em;
+            margin-bottom: var(--spacing-sm);
+            color: var(--mode-text-light);
+            text-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+        }
+        .pdp-details .rating {
+            margin-bottom: var(--spacing-md);
+            font-size: 1.1em;
+            color: var(--mode-text-medium);
+        }
+        .pdp-details .price {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin-bottom: var(--spacing-md);
+            text-shadow: 0 0 5px rgba(0, 191, 255, 0.7);
+        }
+        .pdp-details .short-description {
+            font-size: 1.1em;
+            color: var(--mode-text-light);
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 1px dashed rgba(0, 191, 255, 0.1);
+        }
+        .pdp-features h3 {
+            font-size: 1.3em;
+            color: var(--accent-purple);
+            margin-bottom: var(--spacing-sm);
+            text-shadow: none;
+        }
+        .pdp-features ul {
+            list-style: none;
+            margin-left: 0;
+            padding-left: 0;
+            margin-bottom: var(--spacing-lg);
+        }
+        .pdp-features ul li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 8px;
+            color: var(--mode-text-medium);
+        }
+        .pdp-features ul li::before {
+            content: '\f00c'; /* Checkmark icon */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: var(--success-green);
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-size: 0.9em;
+        }
+        .pdp-cta-section {
+            margin-top: var(--spacing-md);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        /* Tabs */
+        .product-tabs {
+            margin-top: var(--spacing-lg);
+            background-color: var(--mode-bg-medium);
+            border-radius: var(--border-radius-lg);
+            border: 1px solid rgba(0, 191, 255, 0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .tab-buttons {
+            display: flex;
+            justify-content: space-around;
+            border-bottom: 1px solid rgba(0, 191, 255, 0.2);
+            flex-wrap: wrap; /* Allow tabs to wrap on smaller screens */
+        }
+        .tab-button {
+            flex: 1;
+            background-color: transparent;
+            border: none;
+            padding: var(--spacing-md) var(--spacing-sm);
+            color: var(--mode-text-medium);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all var(--transition-speed) var(--transition-ease);
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+        .tab-button::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--accent-blue);
+            transform: scaleX(0);
+            transform-origin: bottom center;
+            transition: transform var(--transition-speed) var(--transition-ease);
+        }
+        .tab-button:hover {
+            color: var(--accent-blue);
+        }
+        .tab-button.active {
+            color: var(--accent-blue);
+            font-weight: 700;
+            background-color: var(--mode-bg-light);
+        }
+        body.light-mode .tab-button.active {
+            background-color: rgba(0, 123, 255, 0.1);
+        }
+        .tab-button.active::after {
+            transform: scaleX(1);
+        }
+        .tab-content {
+            padding: var(--spacing-md);
+            animation: fadeIn 0.5s var(--transition-ease);
+            /* Added for specifications table responsiveness */
+            overflow-x: auto;
+        }
+        .tab-content h3 {
+            color: var(--accent-blue);
+            font-size: 1.5em;
+            margin-bottom: var(--spacing-sm);
+            text-shadow: none;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: var(--spacing-sm);
+            min-width: 500px; /* Ensure table doesn't shrink too much for mobile view */
+        }
+        .comparison-table th, .comparison-table td {
+            border: 1px solid rgba(0, 191, 255, 0.1);
+            padding: 12px;
+            text-align: left;
+            color: var(--mode-text-light);
+        }
+        body.light-mode .comparison-table th, body.light-mode .comparison-table td {
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+        .comparison-table th {
+            background-color: rgba(0, 191, 255, 0.15);
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+        .comparison-table tr:nth-child(even) {
+            background-color: rgba(0, 191, 255, 0.05);
+        }
+        body.light-mode .comparison-table tr:nth-child(even) {
+            background-color: rgba(0, 123, 255, 0.02);
+        }
+        /* Add-on Features Section */
+        .add-on-features-section {
+            margin-top: var(--spacing-lg);
+            padding: var(--spacing-lg) var(--spacing-md);
+            background-color: var(--mode-bg-medium);
+            border-radius: var(--border-radius-lg);
+            border: 1px solid rgba(138, 43, 226, 0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .add-on-features-section h3 {
+            text-align: center;
+            margin-bottom: var(--spacing-md);
+            color: var(--accent-purple);
+        }
+        .add-on-card {
+            background-color: var(--mode-bg-light);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius-md);
+            border: 1px dashed rgba(138, 43, 226, 0.3);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start; /* Align text to left */
+            text-align: left; /* Ensure text alignment */
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        body.light-mode .add-on-card {
+            background-color: var(--mode-bg-light);
+            border-color: rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .add-on-card h4 {
+            color: var(--mode-text-light);
+            font-size: 1.3em;
+            margin-bottom: var(--spacing-xs);
+            text-shadow: none;
+        }
+        .add-on-card p {
+            font-size: 0.9em;
+            color: var(--mode-text-medium);
+            margin-bottom: var(--spacing-sm);
+        }
+        .add-on-card .price {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: var(--success-green); /* Green for add-on prices */
+            margin-bottom: var(--spacing-md);
+        }
+        /* Cart Page */
+        .cart-page-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-md);
+        }
+        .cart-items {
+            flex: 2;
+            min-width: 300px;
+            background-color: var(--mode-bg-medium);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius-lg);
+            border: 1px solid rgba(0, 191, 255, 0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-sm) 0;
+            border-bottom: 1px dashed rgba(0, 191, 255, 0.1);
+            margin-bottom: var(--spacing-sm);
+        }
+        .cart-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .cart-item-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid rgba(0, 191, 255, 0.2);
+        }
+        .cart-item-details {
+            flex-grow: 1;
+        }
+        .cart-item-details h3 {
+            font-size: 1.2em;
+            margin-bottom: 5px;
+            color: var(--mode-text-light);
+            text-shadow: none;
+        }
+        .cart-item-price {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--accent-blue);
+        }
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        .cart-item-actions input[type="number"] {
+            width: 60px;
+            padding: 8px;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--accent-blue);
+            background-color: rgba(30, 30, 60, 0.8);
+            color: var(--mode-text-light);
+            text-align: center;
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+        body.light-mode .cart-item-actions input[type="number"] {
+            background-color: var(--mode-bg-light);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+        .cart-summary {
+            flex: 1;
+            min-width: 280px;
+            background-color: var(--mode-bg-medium);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius-lg);
+            border: 1px solid rgba(138, 43, 226, 0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .cart-summary h3 {
+            text-align: center;
+            margin-bottom: var(--spacing-md);
+            color: var(--accent-purple);
+            text-shadow: none;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed rgba(0, 191, 255, 0.1);
+            color: var(--mode-text-light);
+        }
+        .summary-row.total {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--accent-blue);
+            border-bottom: none;
+            margin-top: var(--spacing-sm);
+        }
+        /* Modals (Book Call, Enquire Now, Demo Preview, Message Box) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 2000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            background-color: rgba(0, 0, 0, 0.8); /* Black w/ opacity */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            backdrop-filter: blur(5px); /* Glassmorphism effect */
+            animation: fadeIn 0.3s ease;
+        }
+        .modal-content {
+            background-color: var(--mode-bg-medium);
+            padding: var(--spacing-lg); /* Default for larger screens */
+            border-radius: var(--border-radius-lg);
+            border: 2px solid var(--mode-border-glow);
+            box-shadow: 0 10px 40px rgba(0, 191, 255, 0.5);
+            max-width: 90%;
+            width: 500px;
+            position: relative;
+            animation: slideInFromTop 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .close-button {
+            color: var(--mode-text-medium);
+            font-size: 2em;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            cursor: pointer;
+            transition: color var(--transition-speed) var(--transition-ease), transform var(--transition-speed) var(--transition-ease);
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: var(--error-red);
+            transform: rotate(90deg);
+        }
+        .modal-content h2 {
+            text-align: center;
+            margin-bottom: var(--spacing-md);
+            color: var(--accent-blue);
+            text-shadow: none;
+            font-size: 1.8em;
+        }
+        .modal-content form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        .modal-content label {
+            margin-bottom: 5px;
+            color: var(--mode-text-light);
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        .modal-content input[type="text"],
+        .modal-content input[type="email"],
+        .modal-content input[type="tel"],
+        .modal-content input[type="time"],
+        .modal-content input[type="date"],
+        .modal-content textarea {
+            padding: 12px;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--accent-purple);
+            background-color: rgba(30, 30, 60, 0.8);
+            color: var(--mode-text-light);
+            font-size: 1em;
+            width: 100%;
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+        body.light-mode .modal-content input,
+        body.light-mode .modal-content textarea {
+            background-color: var(--mode-bg-light);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+        .modal-content input[type="text"]:focus,
+        .modal-content input[type="email"]:focus,
+        .modal-content input[type="tel"]:focus,
+        .modal-content input[type="time"]:focus,
+        .modal-content input[type="date"]:focus,
+        .modal-content textarea:focus {
+            outline: none;
+            border-color: var(--mode-border-glow);
+            box-shadow: 0 0 8px rgba(0, 191, 255, 0.5);
+        }
+        .modal-content textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .demo-modal-iframe {
+            width: 100%;
+            height: 60vh; /* Responsive height */
+            border: none;
+            border-radius: var(--border-radius-md);
+            background-color: var(--mode-bg-dark);
+            transition: background-color 0.3s ease;
+        }
+        /* Custom Message Box specifics */
+        #messageBox .modal-content {
+            text-align: center;
+            padding-bottom: var(--spacing-md);
+        }
+        #messageBoxTitle {
+            color: var(--accent-blue);
+            margin-bottom: var(--spacing-sm);
+        }
+        #messageBoxContent {
+            color: var(--mode-text-light);
+            margin-bottom: var(--spacing-md);
+            font-size: 1.1em;
+        }
+        /* FAQ Accordion Styles */
+        .faq-section {
+            margin-top: var(--spacing-xl);
+        }
+        .accordion-item {
+            background-color: var(--mode-bg-medium);
+            border-radius: var(--border-radius-md);
+            margin-bottom: var(--spacing-sm);
+            overflow: hidden;
+            border: 1px solid rgba(138, 43, 226, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .accordion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-md);
+            cursor: pointer;
+            color: var(--mode-text-light);
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: background-color var(--transition-speed) var(--transition-ease), color var(--transition-speed) var(--transition-ease);
+        }
+        .accordion-header:hover {
+            background-color: rgba(42, 42, 78, 0.4);
+        }
+        body.light-mode .accordion-header:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        .accordion-header .icon {
+            font-size: 1.2em;
+            transition: transform var(--transition-speed) var(--transition-ease);
+        }
+        .accordion-header.active .icon {
+            transform: rotate(45deg); /* Change + to X or rotate */
+        }
+        .accordion-content {
+            padding: 0 var(--spacing-md);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height var(--transition-speed) var(--transition-ease), padding var(--transition-speed) var(--transition-ease);
+            color: var(--mode-text-medium);
+        }
+        .accordion-content.active {
+            max-height: 200px; /* Adjust as needed for content height */
+            padding-bottom: var(--spacing-md);
+        }
+        /* Footer */
+        .footer {
+            background-color: var(--mode-bg-dark);
+            padding: var(--spacing-lg) 0;
+            border-top: 1px solid rgba(0, 191, 255, 0.1);
+            text-align: center;
+            box-shadow: inset 0 5px 20px rgba(0, 0, 0, 0.3);
+            margin-top: var(--spacing-xl);
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            text-align: left; /* Align columns left */
+        }
+        .footer-column {
+            flex: 1;
+            min-width: 220px;
+            padding: var(--spacing-sm);
+        }
+        .footer-column h3 {
+            color: var(--accent-purple);
+            font-size: 1.4em;
+            margin-bottom: var(--spacing-md);
+            text-shadow: none;
+            text-align: left;
+        }
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .footer-column ul li {
+            margin-bottom: 8px;
+            color: var(--mode-text-medium);
+        }
+        .footer-column ul li a {
+            color: var(--mode-text-medium);
+            transition: color 0.2s ease;
+        }
+        .footer-column ul li a:hover {
+            color: var(--accent-blue);
+        }
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+        }
+        .social-icon-card {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            background-color: var(--mode-bg-light);
+            border: 1px solid rgba(0, 191, 255, 0.1);
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        body.light-mode .social-icon-card {
+            background-color: var(--mode-bg-light);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+        .social-icon-card:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 0 20px rgba(0, 191, 255, 0.6);
+        }
+        .social-icon-card i {
+            font-size: 2em;
+            color: var(--accent-blue);
+            text-shadow: 0 0 5px rgba(0, 191, 255, 0.5);
+        }
+        .contact-details-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            font-size: 0.95em;
+        }
+        .contact-details-grid div {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--mode-text-medium);
+        }
+        .contact-details-grid div i {
+            color: var(--accent-blue);
+            font-size: 1.1em;
+        }
+        .footer-bottom-text {
+            color: var(--mode-text-medium);
+            font-size: 0.9em;
+            margin-top: var(--spacing-lg);
+            border-top: 1px dashed rgba(0, 191, 255, 0.1);
+            padding-top: var(--spacing-md);
+            transition: border-color 0.3s ease, color 0.3s ease;
+        }
+        .footer-bottom-text a {
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+        /* Pre-loader Styles */
+        #zenora-preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--mode-bg-dark); /* Dark background */
+            z-index: 10000; /* Above everything else */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Prevent scrollbars during animation */
+            flex-direction: column; /* For holographic effect */
+        }
+        .zenora-text-container {
+            display: flex;
+            overflow: hidden; /* Hide parts of text outside the container */
+        }
+        .zenora-char {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4em; /* Large font size for impact */
+            font-weight: 700;
+            color: var(--accent-blue); /* Glowing blue color */
+            text-shadow: 0 0 20px rgba(0, 191, 255, 0.8);
+            transform: translateX(-100%); /* Start off-screen to the left */
+            opacity: 0; /* Initially hidden */
+            animation: slideInZenora 0.8s forwards ease-out; /* Animation for each character */
+            white-space: nowrap; /* Keep characters from wrapping */
+        }
+        /* Delay for each character to create left-to-right effect */
+        .zenora-char:nth-child(1) { animation-delay: 0.1s; }
+        .zenora-char:nth-child(2) { animation-delay: 0.2s; }
+        .zenora-char:nth-child(3) { animation-delay: 0.3s; }
+        .zenora-char:nth-child(4) { animation-delay: 0.4s; }
+        .zenora-char:nth-child(5) { animation-delay: 0.5s; }
+        .zenora-char:nth-child(6) { animation-delay: 0.6s; }
+        @keyframes slideInZenora {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0%); opacity: 1; }
+        }
+        .zenora-preloader-fade-out {
+            animation: fadeOut 0.5s forwards ease-out 2s; /* Fade out after text animation */
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; visibility: hidden; }
+        }
+        /* Hologram Loader Style */
+        #hologram-container {
+            width: 100px; /* Size of the 3D object */
+            height: 100px;
+            margin-top: 20px;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards 1s; /* Appear after text */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            /* GENERAL TYPOGRAPHY & LAYOUT */
+            h1 { font-size: 2em; }
+            h2 { font-size: 1.8em; }
+            h3 { font-size: 1.4em; }
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                padding: var(--spacing-sm); /* Adjusted header padding for mobile */
+            }
+            .logo {
+                margin-right: 0;
+                margin-bottom: var(--spacing-sm);
+            }
+            .nav-links {
+                flex-direction: column;
+                gap: var(--spacing-sm);
+                margin: var(--spacing-sm) 0 var(--spacing-md);
+            }
+            .header-icons {
+                margin-top: var(--spacing-sm);
+                justify-content: center; /* Center icons on mobile */
+                width: 100%;
+            }
+            .cart-icon, .header-icon {
+                font-size: 1.3em; /* Slightly smaller icons */
+                padding: 10px; /* Larger touch target for icons */
+            }
+            .hero-carousel h1 {
+                font-size: 2em;
+            }
+            .hero-carousel p {
+                font-size: 1em;
+            }
+            /* GRID LAYOUTS */
+            .category-shortcuts, .add-on-grid, .social-icons, .contact-details-grid {
+                grid-template-columns: 1fr; /* Single column layout for most grids */
+            }
+            .product-grid, .client-grid { /* Specific adjustment for product and client grids */
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Allow wider cards on larger mobiles */
+            }
+            .sidebar {
+                max-width: 100%; /* Full width sidebar on mobile */
+                margin-bottom: var(--spacing-md);
+            }
+            .product-listing-layout {
+                flex-direction: column;
+            }
+            .sorting-options {
+                justify-content: center;
+                text-align: center;
+                flex-direction: column;
+                gap: var(--spacing-sm);
+            }
+            .sorting-options select {
+                width: 100%;
+                max-width: 250px; /* Constrain select width */
+            }
+            /* PDP AND PRODUCT CARDS */
+            .pdp-container {
+                flex-direction: column;
+                gap: var(--spacing-md);
+                padding: var(--spacing-md);
+            }
+            .pdp-image-gallery, .pdp-details {
+                min-width: unset; /* Remove min-width to allow shrinking */
+                width: 100%; /* Take full width */
+            }
+            .pdp-details h1 {
+                font-size: 2em;
+            }
+            .product-card-actions {
+                flex-direction: column;
+            }
+            .product-card-actions .btn {
+                min-width: unset; /* Allow buttons to shrink if needed */
+                width: 100%;
+            }
+            .product-card-content {
+                padding: var(--spacing-sm); /* Ensure consistent small padding on mobile */
+            }
+            /* MODALS */
+            .modal-content {
+                padding: var(--spacing-md); /* Reduced padding for smaller screens */
+                max-width: 95%; /* Allow it to be slightly wider if needed */
+            }
+            /* FOOTER */
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .footer-column {
+                min-width: unset;
+                width: 100%;
+                text-align: center;
+            }
+            .footer-column h3 {
+                text-align: center;
+            }
+            .contact-details-grid {
+                width: fit-content; /* Adjust width to content */
+                margin: 0 auto; /* Center the grid */
+            }
+            /* MARQUEE */
+            .testimonials-section {
+                height: 220px; /* Further increased height for better text visibility */
+                padding-top: var(--spacing-xl); /* Push content down from title */
+                margin-top: var(--spacing-lg); /* Adjust overall section margin */
+            }
+            .testimonial-item-marquee {
+                width: 85vw; /* Adjust width for mobile viewport */
+                margin: 0 10px;
+                padding: 15px; /* Slightly more padding inside testimonials */
+            }
+            .marquee-container {
+                top: 90px; /* Adjusted top to give title more space */
+                height: calc(100% - 90px);
+            }
+            /* Client Detail Page adjustments */
+            .client-detail-container .client-detail-main-image {
+                height: 200px; /* Adjust image height for mobile */
+            }
+            .client-detail-container .client-detail-main-image + p {
+                padding-top: var(--spacing-md); /* Add spacing between image and text */
+            }
+            /* Resume Page specific */
+            .resume-section .timeline {
+                padding-left: 20px; /* Adjust timeline padding */
+            }
+            .resume-section .timeline::before {
+                left: 10px;
+            }
+            .resume-section .timeline-item {
+                padding-left: 30px;
+            }
+            .resume-section .timeline-item::before {
+                left: 0;
+            }
+            .resume-cta-grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* Dashboard */
+            .dashboard-grid {
+                grid-template-columns: 1fr; /* Stack dashboard items on mobile */
+            }
+        }
+        @media (max-width: 480px) {
+            /* FURTHER REDUCTION FOR VERY SMALL PHONES */
+            h1 { font-size: 1.6em; }
+            h2 { font-size: 1.4em; }
+            .section-title { font-size: 1.8em; }
+            .zenora-char { font-size: 2.5em; } /* Smaller font for preloader text */
+            .btn {
+                padding: 8px 12px;
+                font-size: 0.8em;
+            }
+            .hero-carousel {
+                font-size: 0.8em;
+            }
+            .modal-content {
+                padding: var(--spacing-sm); /* Even smaller padding for extremely small screens */
+            }
+            .product-grid, .client-grid { /* Smaller min-width for very small phones */
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+            .testimonial-item-marquee {
+                width: 90vw; /* Make it almost full width on very small screens */
+                padding: 10px;
+            }
+            .pdp-details h1 { /* Adjusted PDP title on smallest screens */
+                font-size: 1.8em;
+            }
+            .pdp-details .price { /* Adjusted PDP price on smallest screens */
+                font-size: 1.8em;
+            }
+             .accordion-header {
+                font-size: 1em; /* Smaller font for FAQ titles on very small screens */
+            }
+             .accordion-content {
+                font-size: 0.9em; /* Smaller font for FAQ content on very small screens */
+            }
+        }
+        /* Glassmorphism/Neumorphism inspired effects (subtle) */
+        .modal-content, .sidebar, .product-tabs, .pdp-container, .cart-items, .cart-summary, .add-on-features-section, .accordion-item {
+            background: rgba(26, 26, 46, 0.7); /* Slightly transparent background */
+            backdrop-filter: blur(8px); /* Blur effect */
+            -webkit-backdrop-filter: blur(8px); /* Safari support */
+            border: 1px solid rgba(0, 191, 255, 0.18); /* Faint border */
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); /* Stronger shadow */
+        }
+        .category-card, .product-card, .add-on-card, .social-icon-card, .client-card {
+            background: rgba(26, 26, 46, 0.7);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(138, 43, 226, 0.15);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .category-card:hover, .product-card:hover, .add-on-card:hover, .social-icon-card:hover, .client-card:hover {
+            background: rgba(42, 42, 78, 0.8); /* Slightly less transparent on hover */
+            border-color: var(--border-glow);
+            box-shadow: 0 6px 20px rgba(0, 191, 255, 0.4);
+        }
+        /* Client Detail Page Specific Styles */
+        .client-detail-container {
+            display: flex;
+            flex-direction: column; /* Stack elements on mobile */
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+            background-color: var(--mode-bg-medium);
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-lg);
+            border: 1px solid rgba(0, 191, 255, 0.1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .client-detail-header h1 {
+            text-align: center;
+            margin-bottom: var(--spacing-md);
+            font-size: 2.5em;
+            color: var(--accent-blue);
+        }
+        .client-detail-image-wrapper {
+            text-align: center;
+            margin-bottom: var(--spacing-md);
+        }
+        .client-detail-content p {
+            margin-bottom: var(--spacing-sm);
+            color: var(--mode-text-light);
+            text-align: justify;
+        }
+        .client-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-md);
+            padding-top: var(--spacing-md);
+            border-top: 1px dashed rgba(0, 191, 255, 0.1);
+        }
+        .client-info-grid div {
+            background-color: var(--mode-bg-light);
+            padding: var(--spacing-sm);
+            border-radius: var(--border-radius-sm);
+            border: 1px solid rgba(138, 43, 226, 0.1);
+            color: var(--mode-text-light);
+            font-size: 0.9em;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .client-info-grid strong {
+            color: var(--accent-blue);
+        }
+        .stack-item {
+            display: inline-flex;
+            align-items: center;
+            margin-right: var(--spacing-sm);
+            margin-bottom: var(--spacing-xs);
+            background-color: rgba(0, 191, 255, 0.1);
+            padding: 5px 10px;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.8em;
+            color: var(--mode-text-light);
+            border: 1px solid rgba(0, 191, 255, 0.2);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        body.light-mode .stack-item {
+            background-color: rgba(0, 123, 255, 0.1);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+        .stack-item i {
+            margin-right: 5px;
+            font-size: 1.2em;
+        }
+
+        /* Voice Assistant Modal */
+        #voiceAssistantModal .modal-content {
+            width: 400px;
+            height: 450px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        #voiceAssistantOutput {
+            background-color: var(--mode-bg-light);
+            border-radius: var(--border-radius-sm);
+            padding: var(--spacing-sm);
+            height: 250px;
+            overflow-y: auto;
+            margin-bottom: var(--spacing-md);
+            border: 1px solid rgba(0, 191, 255, 0.1);
+            color: var(--mode-text-light);
+            font-size: 0.95em;
+            line-height: 1.5;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column-reverse; /* Newest message at bottom */
+        }
+        #voiceAssistantInput {
+            display: flex;
+            gap: var(--spacing-sm);
+            align-items: center;
+        }
+        #voiceAssistantInput button {
+            padding: 10px 15px;
+            font-size: 1.2em;
+            min-width: 50px;
+        }
+        #voiceAssistantInput input[type="text"] {
+            flex-grow: 1;
+        }
+        .chat-message {
+            margin-bottom: 8px;
+            padding: 8px 12px;
+            border-radius: var(--border-radius-md);
+            max-width: 85%;
+        }
+        .chat-message.user {
+            background-color: var(--accent-purple);
+            align-self: flex-end;
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+        .chat-message.bot {
+            background-color: var(--accent-blue);
+            align-self: flex-start;
+            color: white;
+            border-bottom-left-radius: 2px;
+        }
+        .chat-message.system {
+            background-color: var(--text-medium);
+            align-self: center;
+            color: white;
+            font-size: 0.8em;
+        }
+
+        /* Facial Recognition Modal */
+        #faceRecognitionModal .modal-content {
+            width: 550px;
+            height: auto;
+            text-align: center;
+        }
+        #faceRecognitionVideo {
+            width: 100%;
+            height: 300px;
+            background-color: black;
+            border-radius: var(--border-radius-md);
+            margin-bottom: var(--spacing-md);
+            object-fit: cover;
+        }
+        #faceRecognitionStatus {
+            font-size: 1.2em;
+            color: var(--accent-blue);
+            min-height: 30px;
+            margin-bottom: var(--spacing-md);
+        }
+        #faceDetectionOverlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        /* Command Center Dashboard */
+        .dashboard-container {
+            background-color: var(--mode-bg-medium);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-lg);
+            border: 1px solid rgba(0, 191, 255, 0.1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            margin-top: var(--spacing-lg);
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+        .dashboard-card {
+            background-color: var(--mode-bg-light);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius-md);
+            border: 1px solid rgba(138, 43, 226, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        body.light-mode .dashboard-card {
+            background-color: var(--mode-bg-light);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+        .dashboard-card h3 {
+            color: var(--accent-purple);
+            margin-bottom: var(--spacing-sm);
+            font-size: 1.4em;
+        }
+        .dashboard-card p {
+            font-size: 0.95em;
+            color: var(--mode-text-medium);
+        }
+        .chart-container {
+            position: relative;
+            height: 250px;
+            width: 100%;
+        }
+
+        /* Dev Mode Toggle */
+        #devModeOverlay {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0; /* Initially hidden */
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: var(--text-light);
+            z-index: 1500;
+            overflow-y: auto;
+            transition: height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+            opacity: 0;
+            padding: var(--spacing-lg) var(--spacing-md);
+        }
+        #devModeOverlay.active {
+            height: 100%;
+            opacity: 1;
+        }
+        #devModeCloseBtn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2em;
+            color: var(--text-medium);
+            cursor: pointer;
+        }
+        #devModeContent {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: left;
+        }
+        #devModeContent h2 {
+            color: var(--accent-blue);
+            margin-bottom: var(--spacing-lg);
+            text-align: center;
+        }
+        .dev-section {
+            background-color: rgba(26, 26, 46, 0.8);
+            border: 1px solid rgba(0, 191, 255, 0.2);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+        }
+        .dev-section h3 {
+            color: var(--accent-purple);
+            margin-bottom: var(--spacing-sm);
+        }
+        .tech-stack-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .github-log {
+            font-family: 'monospace', 'Courier New', Courier;
+            background-color: var(--bg-dark);
+            padding: var(--spacing-sm);
+            border-radius: var(--border-radius-sm);
+            max-height: 150px;
+            overflow-y: auto;
+            color: #00FF00; /* Green text for logs */
+            border: 1px solid rgba(0, 255, 0, 0.2);
+        }
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px dashed rgba(0, 191, 255, 0.1);
+        }
+        .metric-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Resume Page */
+        .resume-section {
+            background-color: var(--mode-bg-medium);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-lg);
+            border: 1px solid rgba(0, 191, 255, 0.1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            margin-top: var(--spacing-lg);
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .resume-header {
+            text-align: center;
+            margin-bottom: var(--spacing-lg);
+        }
+        .resume-header img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--accent-blue);
+            box-shadow: 0 0 15px rgba(0, 191, 255, 0.7);
+            margin-bottom: var(--spacing-sm);
+        }
+        .resume-header h1 {
+            margin-bottom: var(--spacing-xs);
+        }
+        .resume-header p {
+            font-size: 1.1em;
+            color: var(--accent-purple);
+        }
+        .resume-section-heading {
+            color: var(--accent-blue);
+            margin-top: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+            text-align: center;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        .resume-section-heading::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 2px;
+            background-color: var(--accent-blue);
+        }
+        .timeline {
+            position: relative;
+            padding: 20px 0 20px 50px;
+            margin-left: 20px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 20px;
+            width: 2px;
+            height: 100%;
+            background-color: var(--accent-purple);
+        }
+        .timeline-item {
+            margin-bottom: 30px;
+            position: relative;
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .timeline-item.is-visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .timeline-item::before {
+            content: '\f073'; /* Calendar icon */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: -38px;
+            top: 0;
+            background-color: var(--accent-blue);
+            color: white;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.9em;
+            border: 2px solid var(--border-glow);
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.7);
+        }
+        .timeline-item h4 {
+            color: var(--mode-text-light);
+            margin-bottom: 5px;
+        }
+        .timeline-item .sub-heading {
+            color: var(--accent-purple);
+            font-size: 0.95em;
+            margin-bottom: 10px;
+        }
+        .timeline-item p {
+            font-size: 0.9em;
+            color: var(--mode-text-medium);
+            margin-bottom: 5px;
+        }
+        .github-projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+        .github-project-card {
+            background-color: var(--mode-bg-light);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius-md);
+            border: 1px solid rgba(138, 43, 226, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        .github-project-card h4 {
+            color: var(--accent-blue);
+            margin-bottom: 5px;
+        }
+        .github-project-card a {
+            font-weight: 600;
+        }
+        .resume-cta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-xl);
+            text-align: center;
+        }
+        .resume-chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+            background-color: var(--mode-bg-light);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-md);
+            border: 1px solid rgba(0, 191, 255, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Experiment Zone */
+        .experiment-zone-container {
+            background-color: var(--mode-bg-medium);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-lg);
+            border: 1px solid rgba(0, 191, 255, 0.1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            margin-top: var(--spacing-lg);
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .experiment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+        .experiment-card {
+            background-color: var(--mode-bg-light);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius-md);
+            border: 1px solid rgba(138, 43, 226, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        }
+        .experiment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 191, 255, 0.3);
+        }
+        .experiment-card h3 {
+            color: var(--accent-purple);
+            margin-bottom: var(--spacing-sm);
+        }
+        .experiment-card p {
+            color: var(--mode-text-medium);
+        }
+
+        /* Interactive Website Builder Demo */
+        #websiteBuilderDemo .modal-content {
+            width: 90vw;
+            max-width: 1000px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .builder-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: var(--spacing-md);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .builder-palette {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            padding: 5px;
+            border: 1px solid var(--accent-blue);
+            border-radius: var(--border-radius-sm);
+            background-color: rgba(0, 191, 255, 0.05);
+            margin-bottom: var(--spacing-md);
+        }
+        .draggable-element {
+            padding: 8px 12px;
+            background-color: var(--accent-purple);
+            color: white;
+            border-radius: var(--border-radius-sm);
+            cursor: grab;
+            font-size: 0.9em;
+        }
+        #builderCanvas {
+            flex-grow: 1;
+            border: 2px dashed var(--mode-text-medium);
+            border-radius: var(--border-radius-md);
+            background-color: var(--mode-bg-light);
+            position: relative;
+            overflow: auto; /* Allow scrolling if content overflows */
+        }
+        #builderCanvas.drag-over {
+            border-color: var(--success-green);
+            box-shadow: 0 0 10px var(--success-green);
+        }
+        .dropped-element {
+            position: absolute; /* Allow precise positioning */
+            padding: 10px;
+            background-color: rgba(0, 191, 255, 0.7);
+            border: 1px solid var(--accent-blue);
+            color: white;
+            border-radius: var(--border-radius-sm);
+            cursor: grab;
+            resize: both; /* Allow resizing */
+            overflow: auto; /* Allow content inside to scroll if resized small */
+            min-width: 50px;
+            min-height: 30px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        .dropped-element.selected {
+            outline: 2px dashed var(--error-red);
+        }
+        .resize-handle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: var(--error-red);
+            border: 1px solid white;
+            z-index: 1;
+        }
+        .handle-br { bottom: -5px; right: -5px; cursor: se-resize; }
+
+        /* Flip Card Editor */
+        #flipCardEditorModal .modal-content {
+            width: 90vw;
+            max-width: 800px;
+            height: auto;
+            min-height: 500px;
+        }
+        .flip-card-editor-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-md);
+            height: calc(100% - 120px); /* Adjust height for controls */
+            margin-bottom: var(--spacing-md);
+        }
+        .card-preview-area {
+            perspective: 1000px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            background-color: var(--mode-bg-light);
+            border-radius: var(--border-radius-md);
+            border: 1px solid rgba(0, 191, 255, 0.1);
+        }
+        .flip-card-container {
+            width: 280px;
+            height: 180px;
+            position: relative;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: var(--border-radius-md);
+        }
+        .flip-card-container.flipped {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--border-radius-md);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: var(--spacing-md);
+            text-align: center;
+            color: white;
+        }
+        .flip-card-front {
+            background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple));
+            z-index: 2;
+        }
+        .flip-card-back {
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-blue));
+            transform: rotateY(180deg);
+        }
+        .flip-card-editor-controls {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        .flip-card-editor-controls input, .flip-card-editor-controls textarea {
+            width: 100%;
+        }
+        .flip-card-editor-controls button {
+            width: 100%;
+        }
+
+        /* Show-Off Mode */
+        #showOffModeOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-dark);
+            z-index: 5000;
+            display: none; /* Hidden by default */
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            animation: fadeIn 0.5s forwards;
+            flex-direction: column;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+        }
+        #showOffModeOverlay h1 {
+            font-size: 3em;
+            color: var(--accent-blue);
+            text-shadow: 0 0 20px rgba(0, 191, 255, 0.8);
+            margin-bottom: var(--spacing-md);
+            opacity: 0;
+            animation: fadeInScale 1s forwards 0.5s;
+        }
+        #showOffModeOverlay p {
+            font-size: 1.2em;
+            color: var(--text-medium);
+            margin-bottom: var(--spacing-xl);
+            opacity: 0;
+            animation: fadeIn 1s forwards 1.5s;
+        }
+        #showOffModeOverlay .particle-system-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Terminal Interface */
+        #terminalModal .modal-content {
+            width: 90vw;
+            max-width: 700px;
+            height: 60vh;
+            background-color: #000;
+            color: #00FF00;
+            font-family: 'monospace', 'Courier New', Courier;
+            border: 2px solid #00FF00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            padding: var(--spacing-md);
+        }
+        #terminalOutput {
+            flex-grow: 1;
+            overflow-y: auto;
+            border-bottom: 1px solid #00FF00;
+            padding-bottom: var(--spacing-sm);
+            margin-bottom: var(--spacing-sm);
+        }
+        #terminalInputLine {
+            display: flex;
+            align-items: center;
+        }
+        #terminalInputLine span {
+            color: #00BFFF; /* Prompt color */
+            margin-right: 5px;
+        }
+        #terminalInput {
+            flex-grow: 1;
+            background: none;
+            border: none;
+            color: #00FF00;
+            font-family: inherit;
+            font-size: 1em;
+            outline: none;
+            caret-color: #00FF00;
+        }
+        .blink-caret {
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            from, to { border-color: transparent; }
+            50% { border-color: #00FF00; }
+        }
+
+        /* Common Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideInFromTop {
+            from { transform: translateY(-50px) scale(0.9); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .animate-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Neo Mode Toggle Button (Hidden by default) */
+        #neoModeToggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--bg-dark);
+            color: var(--accent-blue);
+            border: 2px solid var(--accent-blue);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5em;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+            transition: all 0.3s ease;
+            display: none; /* Initially hidden */
+        }
+        #neoModeToggle:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 0 20px var(--border-glow);
+        }
+        #neoModeToggle.active {
+            background-color: var(--accent-blue);
+            color: var(--bg-dark);
+        }
+
+        /* Recruiter Mode - Hidden Shortcut triggered overlay */
+        #recruiterModeOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(0, 0, 0, 0.9), rgba(10, 10, 31, 0.95));
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: var(--spacing-lg);
+            overflow-y: auto;
+        }
+        #recruiterModeOverlay h1 {
+            font-size: 3.5em;
+            color: var(--accent-blue);
+            text-shadow: 0 0 25px var(--accent-blue);
+            animation: fadeInScale 1s ease-out;
+            margin-bottom: var(--spacing-lg);
+        }
+        #recruiterModeOverlay p {
+            font-size: 1.2em;
+            color: var(--text-medium);
+            margin-bottom: var(--spacing-xl);
+            animation: fadeIn 1s ease-out 0.5s forwards;
+            opacity: 0;
+        }
+        .recruiter-mode-content {
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+        .recruiter-card {
+            background-color: rgba(26, 26, 46, 0.8);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-md);
+            border: 1px solid rgba(0, 191, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .recruiter-card h3 {
+            color: var(--accent-purple);
+            margin-bottom: var(--spacing-sm);
+        }
+        .recruiter-card p {
+            font-size: 0.95em;
+            color: var(--text-medium);
+            margin-bottom: var(--spacing-sm);
+        }
+        .recruiter-mode-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2.5em;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .recruiter-mode-close:hover {
+            color: var(--error-red);
+            transform: rotate(90deg);
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Pre-loader Screen (New Zenora specific) -->
+    <div id="zenora-preloader">
+        <div class="zenora-text-container">
+            <span class="zenora-char">Z</span>
+            <span class="zenora-char">E</span>
+            <span class="zenora-char">N</span>
+            <span class="zenora-char">O</span>
+            <span class="zenora-char">R</span>
+            <span class="zenora-char">A</span>
+        </div>
+        <div id="hologram-container"></div>
+    </div>
+    <!-- Background Canvas for Particles / Three.js Scene -->
+    <canvas id="backgroundCanvas"></canvas>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="container header-content">
+            <a href="#" class="logo" onclick="navigateTo('home'); return false;">ZENORA</a>
+            <nav class="nav-links">
+                <a href="#" onclick="navigateTo('home'); return false;">Home</a>
+                <a href="#" onclick="navigateTo('all-products'); return false;">Products</a>
+                <a href="#about-us-section">About Us</a>
+                <a href="#contact-us-section">Contact</a>
+                <a href="#" onclick="navigateTo('resume'); return false;">Resume</a>
+                <a href="#" onclick="navigateTo('dashboard'); return false;">Dashboard</a>
+                <a href="#" onclick="navigateTo('experiments'); return false;">Experiments</a>
+            </nav>
+            <div class="header-icons">
+                <div class="theme-switch" id="themeSwitch"></div>
+                <div class="header-icon" onclick="openModal('voiceAssistantModal'); return false;" title="Voice Assistant">
+                    <i class="fas fa-microphone"></i>
+                </div>
+                <div class="header-icon" onclick="openModal('terminalModal'); return false;" title="Terminal Interface">
+                    <i class="fas fa-terminal"></i>
+                </div>
+                <div class="header-icon" onclick="openModal('chatBotModal'); return false;" title="AI Chatbot">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="header-icon" onclick="openModal('faceRecognitionModal'); return false;" title="Facial Recognition Demo">
+                    <i class="fas fa-face-recognition"></i>
+                </div>
+                <div class="cart-icon" onclick="navigateTo('cart'); return false;" title="Shopping Cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-item-count" class="cart-item-count">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Main Content Area -->
+    <main id="main-content">
+        <!-- Content will be dynamically loaded here by JavaScript -->
+    </main>
+    <!-- Modals -->
+    <div id="bookCallModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('bookCallModal')">×</span>
+            <h2>Book a Consultation Call</h2>
+            <form id="bookCallForm">
+                <label for="callName">Your Name:</label>
+                <input type="text" id="callName" required>
+                <label for="callEmail">Your Email:</label>
+                <input type="email" id="callEmail" required>
+                <label for="callPhone">Phone (Optional):</label>
+                <input type="tel" id="callPhone">
+                <label for="callTopic">Topic of Discussion:</label>
+                <input type="text" id="callTopic" placeholder="e.g., Website Development, Digital Portal">
+                <label for="callDate">Preferred Date:</label>
+                <input type="date" id="callDate" required>
+                <label for="callTime">Preferred Time:</label>
+                <input type="time" id="callTime" required>
+                <label for="callMessage">Your Message/Requirements:</label>
+                <textarea id="callMessage" rows="4"></textarea>
+                <button type="submit" class="btn btn-primary">Submit Request</button>
+            </form>
+        </div>
+    </div>
+    <div id="enquireNowModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('enquireNowModal')">×</span>
+            <h2>Enquire About This Service</h2>
+            <form id="enquireNowForm">
+                <label for="enquireName">Name:</label>
+                <input type="text" id="enquireName" required>
+                <label for="enquireEmail">Email:</label>
+                <input type="email" id="enquireEmail" required>
+                <label for="enquirePhone">Phone:</label>
+                <input type="tel" id="enquirePhone">
+                <label for="enquireProduct">Product Interested In:</label>
+                <input type="text" id="enquireProduct" readonly>
+                <label for="enquireMessage">Your Message/Questions:</label>
+                <textarea id="enquireMessage" rows="4"></textarea>
+                <button type="submit" class="btn btn-primary">Send Enquiry</button>
+            </form>
+        </div>
+    </div>
+    <div id="demoPreviewModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('demoPreviewModal')">×</span>
+            <h2>Live Demo Preview</h2>
+            <iframe id="demoPreviewIframe" class="demo-modal-iframe" src="" allowfullscreen></iframe>
+        </div>
+    </div>
+    <!-- Custom Alert/Message Box -->
+    <div id="messageBox" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('messageBox')">×</span>
+            <h2 id="messageBoxTitle"></h2>
+            <p id="messageBoxContent"></p>
+            <button class="btn btn-primary mt-md" onclick="closeModal('messageBox')">OK</button>
+        </div>
+    </div>
+
+    <!-- NEW Voice Assistant Modal -->
+    <div id="voiceAssistantModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('voiceAssistantModal')">×</span>
+            <h2>Zenora Voice Assistant</h2>
+            <div id="voiceAssistantOutput">
+                <div class="chat-message bot">Hello! How can I assist you today? Try saying "Show me products" or "Tell me about Zenora."</div>
+            </div>
+            <div id="voiceAssistantInput">
+                <input type="text" id="voiceCommandInput" placeholder="Type or speak your command..." disabled>
+                <button id="voiceCommandMicBtn" class="btn btn-primary"><i class="fas fa-microphone"></i></button>
+                <button id="voiceCommandSendBtn" class="btn btn-secondary"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW Facial Recognition Modal -->
+    <div id="faceRecognitionModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('faceRecognitionModal')">×</span>
+            <h2>Facial Recognition Login Demo</h2>
+            <p style="color: var(--text-medium); font-size: 0.9em; margin-bottom: var(--spacing-sm);">
+                This is a demo. It detects if a face is present and gives a simulated 'login' message. No data is stored.
+            </p>
+            <video id="faceRecognitionVideo" autoplay muted></video>
+            <canvas id="faceDetectionOverlay"></canvas>
+            <p id="faceRecognitionStatus" class="mt-md">Initializing camera...</p>
+            <button class="btn btn-primary" onclick="startFaceRecognition()">Start Camera</button>
+            <button class="btn btn-secondary mt-sm" onclick="stopFaceRecognition()">Stop Camera</button>
+        </div>
+    </div>
+
+    <!-- NEW ChatGPT-Powered Client Bot Modal -->
+    <div id="chatBotModal" class="modal">
+        <div class="modal-content" style="width: 450px; height: 550px; display: flex; flex-direction: column;">
+            <span class="close-button" onclick="closeModal('chatBotModal')">×</span>
+            <h2>Zenora AI Assistant (Beta)</h2>
+            <div id="chatBotOutput" style="background-color: var(--mode-bg-light); border-radius: var(--border-radius-sm); padding: var(--spacing-sm); flex-grow: 1; overflow-y: auto; margin-bottom: var(--spacing-md); border: 1px solid rgba(0, 191, 255, 0.1); color: var(--mode-text-light); font-size: 0.95em; line-height: 1.5; display: flex; flex-direction: column-reverse;">
+                <div class="chat-message bot">Hello! I'm your AI assistant. How can I help you with Zenora products or services?</div>
+            </div>
+            <div style="display: flex; gap: var(--spacing-sm);">
+                <input type="text" id="chatBotInput" placeholder="Ask me anything..." onkeydown="if(event.keyCode===13) sendMessageToChatBot()">
+                <button class="btn btn-primary" onclick="sendMessageToChatBot()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW Terminal Interface Modal -->
+    <div id="terminalModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('terminalModal')">×</span>
+            <h2>ZENORA_CLI ></h2>
+            <div id="terminalOutput">
+                Welcome to Zenora Command Line Interface.
+                <br>Type 'help' for commands.
+                <br>> _
+            </div>
+            <div id="terminalInputLine">
+                <span>ZENORA_CLI ></span>
+                <input type="text" id="terminalInput" autofocus>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW Interactive Website Builder Demo Modal -->
+    <div id="websiteBuilderDemo" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('websiteBuilderDemo')">×</span>
+            <h2>Interactive Website Builder Demo</h2>
+            <p style="color: var(--text-medium); font-size: 0.9em; margin-bottom: var(--spacing-sm);">
+                Drag elements from the palette onto the canvas. Click to select, drag to move.
+            </p>
+            <div class="builder-controls">
+                <div class="builder-palette">
+                    <div class="draggable-element" draggable="true" data-type="header">Header</div>
+                    <div class="draggable-element" draggable="true" data-type="text">Text Block</div>
+                    <div class="draggable-element" draggable="true" data-type="image">Image</div>
+                    <div class="draggable-element" draggable="true" data-type="button">Button</div>
+                </div>
+                <button class="btn btn-secondary" onclick="saveBuilderState()">Save Layout</button>
+                <button class="btn btn-secondary" onclick="loadBuilderState()">Load Layout</button>
+                <button class="btn btn-remove" onclick="clearBuilderCanvas()">Clear Canvas</button>
+            </div>
+            <div id="builderCanvas" ondragover="allowDrop(event)" ondrop="dropElement(event)">
+                <!-- Dropped elements go here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW Flip Card Digital Card Editor Modal -->
+    <div id="flipCardEditorModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('flipCardEditorModal')">×</span>
+            <h2>Flip Card Digital Card Editor</h2>
+            <p style="color: var(--text-medium); font-size: 0.9em; margin-bottom: var(--spacing-sm);">
+                Customize the text on your digital flip card.
+            </p>
+            <div class="flip-card-editor-grid">
+                <div class="card-preview-area" onclick="toggleFlipCard()">
+                    <div class="flip-card-container" id="flipCardContainer">
+                        <div class="flip-card-front">
+                            <h3 id="cardFrontTextDisplay">Front Text</h3>
+                            <p id="cardFrontSubTextDisplay">Click to Flip</p>
+                        </div>
+                        <div class="flip-card-back">
+                            <h3 id="cardBackTextDisplay">Back Text</h3>
+                            <p id="cardBackSubTextDisplay">Details on Flip</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flip-card-editor-controls">
+                    <label for="frontText">Front Title:</label>
+                    <input type="text" id="frontText" value="Your Name" onkeyup="updateFlipCard()">
+                    <label for="frontSubText">Front Subtitle:</label>
+                    <input type="text" id="frontSubText" value="Your Title" onkeyup="updateFlipCard()">
+                    <label for="backText">Back Title:</label>
+                    <input type="text" id="backText" value="Contact Info" onkeyup="updateFlipCard()">
+                    <label for="backSubText">Back Subtitle:</label>
+                    <textarea id="backSubText" rows="3" onkeyup="updateFlipCard()">Email: info@zenora.com&#10;Phone: +91 98765 43210</textarea>
+                    <button class="btn btn-primary" onclick="saveFlipCardState()">Save Card</button>
+                    <button class="btn btn-secondary" onclick="loadFlipCardState()">Load Saved</button>
+                    <button class="btn btn-remove" onclick="clearFlipCardState()">Clear Card</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW Dev Mode Overlay -->
+    <div id="devModeOverlay">
+        <span id="devModeCloseBtn" onclick="toggleDevMode()">×</span>
+        <div id="devModeContent" class="animate-on-scroll">
+            <h2 class="section-title">Developer Mode</h2>
+
+            <div class="dev-section">
+                <h3>Current Tech Stack</h3>
+                <div class="tech-stack-list">
+                    <span class="stack-item"><i class="fab fa-html5" style="color: #e34c26;"></i>HTML5</span>
+                    <span class="stack-item"><i class="fab fa-css3-alt" style="color: #264de4;"></i>CSS3</span>
+                    <span class="stack-item"><i class="fab fa-js" style="color: #f7df1e;"></i>JavaScript</span>
+                    <span class="stack-item"><i class="fab fa-react" style="color: #61dafb;"></i>React (Conceptual/Future)</span>
+                    <span class="stack-item"><i class="fab fa-github" style="color: #fff;"></i>GitHub Pages</span>
+                    <span class="stack-item"><i class="fas fa-microchip" style="color: var(--accent-blue);"></i>three.js</span>
+                    <span class="stack-item"><i class="fas fa-chart-line" style="color: var(--success-green);"></i>Chart.js</span>
+                    <span class="stack-item"><i class="fas fa-fingerprint" style="color: var(--accent-purple);"></i>face-api.js</span>
+                    <span class="stack-item"><i class="fas fa-robot" style="color: var(--accent-blue);"></i>Gemini API (LLM)</span>
+                    <span class="stack-item"><i class="fas fa-envelope-open-text" style="color: #FFD700;"></i>EmailJS</span>
+                </div>
+            </div>
+
+            <div class="dev-section">
+                <h3>Deployment & CI/CD Status</h3>
+                <p><strong>Deployment Platform:</strong> Vercel (Simulated)</p>
+                <p><strong>CI/CD Pipeline:</strong> GitHub Actions (Simulated)</p>
+                <div style="display: flex; gap: 15px; margin-top: 10px;">
+                    <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel Badge">
+                    <img src="https://img.shields.io/badge/GitHub_Actions-2671E7?style=for-the-badge&logo=github-actions&logoColor=white" alt="GitHub Actions Badge">
+                    <img src="https://img.shields.io/badge/Status-Passing-brightgreen?style=for-the-badge" alt="Status Badge">
+                </div>
+            </div>
+
+            <div class="dev-section">
+                <h3>Simulated GitHub Commits</h3>
+                <div class="github-log">
+                    <p>2025-06-15: feat: Implemented 3D parallax background with Three.js</p>
+                    <p>2025-06-14: feat: Added AI Voice Assistant (Web Speech + Gemini)</p>
+                    <p>2025-06-13: fix: Enhanced mobile responsiveness for product listings</p>
+                    <p>2025-06-12: chore: Updated product data with detailed descriptions</p>
+                    <p>2025-06-11: feat: Integrated Facial Recognition Demo</p>
+                    <p>2025-06-10: docs: Added comprehensive comments to JavaScript functions</p>
+                    <p>2025-06-09: refactor: Improved CSS variable usage for theming</p>
+                    <p>2025-06-08: feat: Implemented dynamic product recommendation logic</p>
+                    <p>2025-06-07: perf: Optimized image loading for faster page rendering</p>
+                    <p>2025-06-06: feat: Developed Command Center Dashboard UI</p>
+                </div>
+            </div>
+
+            <div class="dev-section">
+                <h3>Performance Metrics (Simulated)</h3>
+                <div class="metric-item"><span>First Contentful Paint (FCP):</span> <span>1.2s <i class="fas fa-check-circle" style="color: var(--success-green);"></i></span></div>
+                <div class="metric-item"><span>Largest Contentful Paint (LCP):</span> <span>1.8s <i class="fas fa-check-circle" style="color: var(--success-green);"></i></span></div>
+                <div class="metric-item"><span>Cumulative Layout Shift (CLS):</span> <span>0.01 <i class="fas fa-check-circle" style="color: var(--success-green);"></i></span></div>
+                <div class="metric-item"><span>Total Blocking Time (TBT):</span> <span>50ms <i class="fas fa-check-circle" style="color: var(--success-green);"></i></span></div>
+                <div class="metric-item"><span>Accessibility Score:</span> <span>98% <i class="fas fa-check-circle" style="color: var(--success-green);"></i></span></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- NEW Recruiter Mode Overlay -->
+    <div id="recruiterModeOverlay">
+        <span class="recruiter-mode-close" onclick="closeRecruiterMode()">×</span>
+        <h1>ZENORA — THE FUTURE IS NOW</h1>
+        <p>A glimpse into the innovation and technology powering Zenora's digital solutions.</p>
+        <div class="recruiter-mode-content">
+            <div class="recruiter-card animate-on-scroll" style="animation-delay: 0.2s;">
+                <h3>Cutting-Edge Tech Stack</h3>
+                <p>Leveraging modern frontend frameworks and advanced libraries for robust, scalable, and visually stunning applications.</p>
+                <button class="btn btn-primary" onclick="toggleDevMode(); closeRecruiterMode();">View Full Stack</button>
+            </div>
+            <div class="recruiter-card animate-on-scroll" style="animation-delay: 0.4s;">
+                <h3>Recent Builds & Projects</h3>
+                <p>Showcasing our diverse portfolio of successful client projects and innovative internal developments.</p>
+                <button class="btn btn-secondary" onclick="navigateTo('home'); closeRecruiterMode();">Explore Projects</button>
+            </div>
+            <div class="recruiter-card animate-on-scroll" style="animation-delay: 0.6s;">
+                <h3>Client Testimonials</h3>
+                <p>Hear directly from our satisfied clients about the impact Zenora has made on their digital presence.</p>
+                <button class="btn btn-primary" onclick="navigateTo('client-detail', 'carrywings-technologies'); closeRecruiterMode();">Read Testimonials</button>
+            </div>
+        </div>
+        <p style="margin-top: var(--spacing-xl); font-size: 0.9em;">
+            This is a simulated recruiter experience. All data is for demonstration purposes.
+        </p>
+    </div>
+
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-column animate-on-scroll">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#" onclick="navigateTo('home'); return false;">Home</a></li>
+                    <li><a href="#" onclick="navigateTo('all-products'); return false;">Products</a></li>
+                    <li><a href="#about-us-section">About Us</a></li>
+                    <li><a href="#contact-us-section">Contact</a></li>
+                    <li><a href="#" onclick="openModal('bookCallModal'); return false;">Book a Call</a></li>
+                </ul>
+            </div>
+            <div class="footer-column animate-on-scroll">
+                <h3>Our Services</h3>
+                <ul>
+                    <li><a href="#" onclick="navigateTo('product-listing', null, 'Website Development'); return false;">Website Development</a></li>
+                    <li><a href="#" onclick="navigateTo('product-listing', null, 'Portal'); return false;">Digital Portals</a></li>
+                    <li><a href="#" onclick="navigateTo('product-listing', null, 'Digital & Smart Business Cards'); return false;">Digital Business Cards</a></li>
+                    <li><a href="#" onclick="navigateTo('product-listing', null, 'Health'); return false;">Health & Fitness Solutions</a></li>
+                </ul>
+            </div>
+            <div class="footer-column animate-on-scroll" id="contact-us-section">
+                <h3>Contact Info</h3>
+                <div class="contact-details-grid">
+                    <div><i class="fas fa-phone-alt"></i> +91 9840633766</div>
+                    <div><i class="fas fa-mobile-alt"></i> +91 9840633766</div>
+                    <div><i class="fas fa-envelope"></i> rajithraaj.r@gmail.com</div>
+                    <div><i class="fas fa-globe"></i> <a href="https://zenora-ai.vercel.app/" target="_blank">zenora-ai.vercel.app</a></div>
+                    <div><i class="fas fa-map-marker-alt"></i> Chennai, Tamil Nadu, India</div>
+                </div>
+            </div>
+            <div class="footer-column animate-on-scroll">
+                <h3>Follow Us</h3>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/rajith.raaj.507" target="_blank" class="social-icon-card"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/rajith_247?igsh=MWdpcWRma3N2bGE4MA==" target="_blank" class="social-icon-card"><i class="fab fa-instagram"></i></a>
+                    <a href="https://in.linkedin.com/in/rajith-raaj-09253933b" target="_blank" class="social-icon-card"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom-text">
+            &copy; 2025 Zenora. All rights reserved. <a href="https://zenora-ai.vercel.app/" onclick="navigateTo('home'); return false;">Powered by ZENORA</a>
+        </div>
+    </footer>
+
+    <!-- Neo Mode Toggle Button (initially hidden) -->
+    <div id="neoModeToggle" title="Toggle Neo Mode"><i class="fas fa-hat-wizard"></i></div>
+
+    <script>
+        // --- Global Variables and Initial Setup ---
+        const mainContent = document.getElementById('main-content');
+        const cartItemCount = document.getElementById('cart-item-count');
+        // Initialize cart from localStorage, or as an empty array if not found
+        let cart = JSON.parse(localStorage.getItem('zenoraCart')) || [];
+
+        // EmailJS Configuration (User must set these up with their own EmailJS account)
+        // You will need to replace these with your actual EmailJS credentials
+        const EMAILJS_SERVICE_ID = 'service_xxxxxx'; // Replace with your Service ID
+        const EMAILJS_TEMPLATE_ID = 'template_xxxxxx'; // Replace with your Template ID
+        const EMAILJS_PUBLIC_KEY = 'user_xxxxxx'; // Replace with your Public Key
+        // Load EmailJS SDK
+        if (typeof emailjs === 'undefined') {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.emailjs.com/sdk/2.6.4/email.min.js';
+            script.onload = () => emailjs.init(EMAILJS_PUBLIC_KEY);
+            document.head.appendChild(script);
+        } else {
+            emailjs.init(EMAILJS_PUBLIC_KEY);
+        }
+
+        // --- Product Data (Simulated Database) ---
+        // This array holds all the product information, extended with detailed descriptions and features.
+        const products = [
+            // 1) Website Development
+            {
+                id: 'website-lite',
+                category: 'Website Development',
+                subCategory: 'Website Development',
+                title: 'Website Lite',
+                description: 'A perfect starting point for individuals and small businesses. Get a sleek, responsive 3-5 page website designed to establish your online presence swiftly and affordably. Ideal for portfolios, small brochures, or personal blogs.',
+                shortDescription: 'Affordable 3-5 page responsive website.',
+                image: 'https://placehold.co/400x300/6f42c1/ffffff?text=Website+Lite',
+                price: 5499,
+                type: 'add-to-cart',
+                keyDifferentiators: ['Responsive Design (Mobile-Friendly)', '3-5 Page Standard Structure', 'Basic SEO Optimization', 'Contact Form Integration', '1 Round of Revisions'],
+                ctaText: 'Add to Cart',
+                demoLink: 'https://example.com/zenora/demo/website-lite',
+                reviews: [
+                    { rating: 4, author: 'Startup Owner', text: 'Great value for money, got my business online quickly.' },
+                    { rating: 3, author: 'Blogger B.', text: 'Good for a basic blog, but limited customization.' }
+                ]
+            },
+            {
+                id: 'website-standard',
+                category: 'Website Development',
+                subCategory: 'Website Development',
+                title: 'Website Standard',
+                description: 'Elevate your online presence with a comprehensive 5-8 page website. Features include advanced design, content management system integration (CMS), and enhanced SEO. Perfect for growing businesses needing more functionality.',
+                shortDescription: '5-8 page website with CMS and SEO.',
+                image: 'https://placehold.co/400x300/17a2b8/ffffff?text=Website+Standard',
+                price: 8999,
+                type: 'add-to-cart',
+                keyDifferentiators: ['CMS Integration (e.g., WordPress)', '5-8 Custom Designed Pages', 'Advanced SEO Setup', 'Social Media Integration', 'Basic Analytics Setup', '2 Rounds of Revisions'],
+                ctaText: 'Add to Cart',
+                demoLink: 'https://example.com/zenora/demo/website-standard',
+                reviews: [
+                    { rating: 5, author: 'Small Business', text: 'Professional design and easy to update content.' },
+                    { rating: 4, author: 'Marketing Lead', text: 'Improved our search ranking significantly.' }
+                ]
+            },
+            {
+                id: 'website-premium',
+                category: 'Website Development',
+                subCategory: 'Website Development',
+                title: 'Website Premium',
+                description: 'A sophisticated, semi-custom website. We personalize core sections like About Us, Services, and founder details with your content and branding, delivering a professional online presence quickly. Limited customization.',
+                shortDescription: 'Semi-custom website with personalized core sections and content.',
+                image: 'https://placehold.co/400x300/007bff/ffffff?text=Website+Premium',
+                price: 12000,
+                type: 'enquiry',
+                keyDifferentiators: ['Pre-defined Structure with Core Content Customization', 'About Company, My Services, About Founder, Location, Logo, Founder Image integration', 'No YouTube Integration (unless purchased as add-on)', 'Quick Deployment for Professional Presence'],
+                ctaText: 'Enquire Now',
+                demoLink: 'https://example.com/zenora/demo/website-premium',
+                reviews: [
+                    { rating: 5, author: 'E-commerce Brand', text: 'Our sales have soared since launching this website. Fantastic!' },
+                    { rating: 5, author: 'Client Manager', text: 'The CRM integration streamlined our operations perfectly.' }
+                ]
+            },
+            {
+                id: 'website-pro-max',
+                category: 'Website Development',
+                subCategory: 'Website Development',
+                title: 'Website Pro Max',
+                description: 'Our flagship custom-built website solution. Experience limitless design possibilities, bespoke functionality, and all advanced integrations including YouTube video. Your brand, truly unique.',
+                shortDescription: 'Full custom, scalable enterprise website solution with all integrations.',
+                image: 'https://placehold.co/400x300/dc3545/ffffff?text=Website+Pro+Max',
+                price: 'Consultation Required',
+                type: 'consultation',
+                keyDifferentiators: ['Full Custom Development: 100% unique design and code.', 'Scalable Architecture', 'API Integrations', 'Dedicated Project Team', 'Ongoing Maintenance & Support', 'Advanced Performance Optimization', 'YouTube Integration (included)'],
+                ctaText: 'Request Quote',
+                demoLink: null,
+                reviews: [
+                    { rating: 5, author: 'Enterprise Solutions Inc.', text: 'Zenora delivered a complex platform flawlessly. Exceptional service!' },
+                    { rating: 5, author: 'CTO of Global Corp', text: 'The scalability and performance are unmatched. Highly impressed.' }
+                ]
+            },
+            // 2) Portal
+            {
+                id: 'portal-lite',
+                category: 'Portal',
+                subCategory: 'Portal',
+                title: 'Portal Lite',
+                description: 'Your essential digital footprint. A basic, cost-effective web page for quick sharing of contact and key information. Get online, effortlessly.',
+                shortDescription: 'Basic online profile for contact & one link.',
+                image: 'https://placehold.co/400x300/6c757d/ffffff?text=Portal+Lite',
+                price: 929,
+                type: 'add-to-cart',
+                keyDifferentiators: ['Single Page Profile', 'Core Contact Information Display', 'One External Link', 'Basic Theme Selection', 'Cost-Effective Solution', 'Limited Customization Options'],
+                ctaText: 'Add to Cart',
+                demoLink: 'https://example.com/zenora/demo/portal-lite',
+                reviews: [
+                    { rating: 4, author: 'Student X', text: 'Simple and affordable to share my details quickly.' }
+                ]
+            },
+            {
+                id: 'portal-plus',
+                category: 'Portal',
+                subCategory: 'Portal',
+                title: 'Portal Plus',
+                description: 'Elevate your digital presence. Our standard portal offers enhanced features for a professional and engaging online profile. More than just a card, it\'s your digital hub.',
+                shortDescription: 'Detailed professional profile with multiple sections.',
+                image: 'https://placehold.co/400x300/fd7e14/ffffff?text=Portal+Plus',
+                price: 999,
+                type: 'add-to-cart',
+                keyDifferentiators: ['Multi-Section Professional Profile', 'Portfolio Showcase', 'Social Media Links', 'Customizable Themes', 'Basic Analytics', 'Enhanced UI/UX'],
+                ctaText: 'Add to Cart',
+                demoLink: 'https://example.com/zenora/demo/portal-plus',
+                reviews: [
+                    { rating: 5, author: 'Artist A.', text: 'Perfect for showcasing my entire portfolio. Very professional.' },
+                    { rating: 4, author: 'Consultant C.', text: 'Easy to update and looks great on all devices.' }
+                ]
+            },
+            {
+                id: 'portal-pro-max',
+                category: 'Portal',
+                subCategory: 'Portal',
+                title: 'Portal Pro Max',
+                description: 'The ultimate digital showcase. Portal Pro Max integrates seamlessly with your custom Zenora website, offering unparalleled features, advanced analytics, and complete brand control.',
+                shortDescription: 'Advanced portal with analytics and lead gen.',
+                image: 'https://placehold.co/400x300/ffc107/ffffff?text=Portal+Pro+Max',
+                price: 2999,
+                type: 'add-to-cart',
+                keyDifferentiators: ['Advanced Analytics Dashboard: Track views, clicks, engagement.', 'Integrated Lead Generation Forms', 'Direct Messaging Integration', 'Priority Support', 'Full Customization Options', 'Website Integration (Limited or Custom)'],
+                ctaText: 'Add to Cart',
+                demoLink: 'https://example.com/zenora/demo/portal-promax',
+                reviews: [
+                    { rating: 5, author: 'Influencer I.', text: 'The analytics are a game-changer for understanding my audience.' },
+                    { rating: 5, author: 'Business Owner', text: 'Generated significant leads through the integrated forms. Worth every penny!' }
+                ]
+            },
+            {
+                id: 'businessman-portal',
+                category: 'Portal',
+                subCategory: 'Portal',
+                title: 'Business Man Portal',
+                description: 'For the dynamic entrepreneur. Showcase your ventures, network, and professional brand with a sophisticated digital presence that adapts to every opportunity.',
+                shortDescription: 'Professional profile for businessmen with networking features.',
+                image: 'https://placehold.co/400x300/fd7e14/ffffff?text=Businessman+Portal',
+                price: 3599,
+                type: 'add-to-cart',
+                keyDifferentiators: ['Enhanced features for business networking', 'Integration with professional platforms', 'Company image, name, logo', '"Share My Card" button (links to URL widget)', 'Contact info, social links, business overview, services section'],
+                ctaText: 'Add to Cart',
+                demoLink: 'https://example.com/zenora/demo/biz-portal',
+                reviews: [{ rating: 4, author: 'Entrepreneur E.', text: 'Helped me connect with more clients effectively.' }]
+            },
+            {
+                id: 'working-professional-portfolio-portal',
+                category: 'Portal',
+                subCategory: 'Portal',
+                title: 'Working Professionals Portfolio Portal',
+                description: 'Your comprehensive digital resume. Highlight your skills, experience, and projects in a visually stunning and easily shareable format that makes a lasting impression.',
+                shortDescription: 'Online portfolio for working professionals.',
+                image: 'https://placehold.co/400x300/ffc107/ffffff?text=Professional+Portfolio',
+                price: 3599,
+                type: 'add-to-cart',
+                keyDifferentiators: ['Professional headshot and resume sections', 'Project showcases with images/videos', 'Testimonials section', 'LinkedIn integration', 'Downloadable PDF resume option'],
+                ctaText: 'Add to Cart',
+                demoLink: 'https://example.com/zenora/demo/prof-portfolio',
+                reviews: [{ rating: 5, author: 'Designer D.', text: 'My portfolio looks fantastic and is easy to share.' }]
+            },
+            {
+                id: 'college-student-portal',
+                category: 'Portal',
+                subCategory: 'Portal',
+                title: 'College Student Portal',
+                description: 'Your academic and professional launchpad. Create a vibrant digital portfolio showcasing your projects, achievements, and unique skills. Even sell your valuable notes to peers!',
+                shortDescription: 'Student portal with academic showcase and "Sell My Notes" feature.',
+                image: 'https://placehold.co/400x300/6f42c1/ffffff?text=Student+Portal',
+                price: 3899,
+                type: 'add-to-cart',
+                keyDifferentiators: ['Academic projects showcase area', 'Skill endorsements section', 'Extra-curricular activities section', 'Integrated "Sell My Notes" functionality for peers', 'Social academic links'],
+                ctaText: 'Add to Cart',
+                demoLink: 'https://example.com/zenora/demo/student-portal',
+                reviews: [{ rating: 4, author: 'Student S.', text: 'The sell notes feature is unique and very helpful.' }]
+            },
+            {
+                id: 'med-students-portal',
+                category: 'Portal',
+                subCategory: 'Portal',
+                title: 'Med Student Portal',
+                description: 'The specialized platform for aspiring medical professionals. Document your clinical rotations, research, and certifications in a structured, accessible format for your career journey.',
+                shortDescription: 'Academic and research profile for med students.',
+                image: 'https://placehold.co/400x300/dc3545/ffffff?text=Med+Student+Portal',
+                price: 3599,
+                type: 'add-to-cart',
+                keyDifferentiators: ['Clinical experience logs', 'Research papers and publications section', 'Certifications and licenses display', 'Volunteer work and relevant academic achievements'],
+                ctaText: 'Add to Cart',
+                demoLink: 'https://example.com/zenora/demo/med-student',
+                reviews: [{ rating: 5, author: 'Med Student M.', text: 'Essential for medical research and networking.' }]
+            },
+            {
+                id: 'lawyers-advocates-portal',
+                category: 'Portal',
+                subCategory: 'Portal',
+                title: 'Lawyer/Advocate Portal',
+                description: 'A comprehensive online presence for legal professionals, highlighting specializations and case histories.',
+                shortDescription: 'Online presence for legal professionals.',
+                image: 'https://placehold.co/400x300/007bff/ffffff?text=Lawyer+Portal',
+                price: 3599,
+                type: 'add-to-cart',
+                keyDifferentiators: ['Practice areas section', 'Case victory highlights (anonymized for privacy)', 'Publications and articles display', 'Bar associations and professional affiliations', 'Direct contact for consultations'],
+                ctaText: 'Add to Cart',
+                demoLink: 'https://example.com/zenora/demo/lawyer-portal',
+                reviews: [{ rating: 4, author: 'Advocate A.', text: 'Helped in professional outreach and client trust.' }]
+            },
+            {
+                id: 'doctors-web-portal',
+                category: 'Portal',
+                subCategory: 'Portal',
+                title: 'Doctor Portal',
+                description: 'Empowering doctors with a professional web presence, including appointment scheduling integration and patient management features.',
+                shortDescription: 'Web portal for doctors with appointment and patient management.',
+                image: 'https://placehold.co/400x300/28a745/ffffff?text=Doctors+Portal',
+                price: 3899,
+                type: 'add-to-cart',
+                keyDifferentiators: ['Doctor profile and specializations', 'Clinic information and opening hours', 'Cal.com integration for appointment booking', 'Patient review section', 'Patient education resources'],
+                ctaText: 'Add to Cart',
+                demoLink: 'https://example.com/zenora/demo/doctor-portal',
+                reviews: [{ rating: 5, author: 'Dr. Z.', text: 'The appointment booking integration is seamless and efficient.' }]
+            },
+            {
+                id: 'dog-tag-qr-portal',
+                category: 'Portal',
+                subCategory: 'Portal',
+                title: 'Dog Tag Portal',
+                description: 'Ensure your beloved pet\'s safety. A scannable QR on their tag links to vital contact information, medical history, and special instructions, ensuring a swift reunion if they ever wander.',
+                shortDescription: 'QR portal for pet dog tags with vital info.',
+                image: 'https://placehold.co/400x300/ffc107/ffffff?text=Dog+Tag+QR',
+                price: 1999,
+                type: 'add-to-cart',
+                keyDifferentiators: ['Pet photo and name', 'Owner contact details', 'Emergency contact information', 'Vet information and medical history (optional)', 'Known allergies/conditions display'],
+                ctaText: 'Add to Cart',
+                demoLink: 'https://example.com/zenora/demo/dogtag-qr',
+                reviews: [{ rating: 5, author: 'Pet Lover P.', text: 'Peace of mind knowing my dog\'s info is accessible.' }]
+            },
+            {
+                id: 'car-bike-accident-wrong-parking-portal',
+                category: 'Portal',
+                subCategory: 'Portal',
+                title: 'Car/Bike Accident/Wrong Parking Portal',
+                description: 'Your digital assistant for on-road incidents. A stick-on QR provides immediate contact in emergencies, wrong parking, or when assistance is needed, streamlining communication and resolution.',
+                shortDescription: 'QR portal for vehicle emergencies.',
+                image: 'https://placehold.co/400x300/6c757d/ffffff?text=Vehicle+QR',
+                price: 1999,
+                type: 'add-to-cart',
+                keyDifferentiators: ['Owner contact information', 'Emergency contact (e.g., family member)', 'Vehicle details (make, model, license plate)', '"Call for Assistance" button', 'Potential for incident reporting guidance'],
+                ctaText: 'Add to Cart',
+                demoLink: 'https://example.com/zenora/demo/vehicle-qr',
+                reviews: [{ rating: 4, author: 'Driver D.', text: 'A clever solution for vehicle emergencies.' }]
+            },
+            {
+                id: 'kids-safety-portal',
+                category: 'Portal',
+                subCategory: 'Portal',
+                title: 'Kids Safety Portal',
+                description: 'Safety first: A QR code for kids\' ID cards with emergency contacts and critical health information. Provides peace of mind for parents and quick action in emergencies.',
+                shortDescription: 'Safety QR portal for kids ID cards.',
+                image: 'https://placehold.co/400x300/17a2b8/ffffff?text=Kids+QR',
+                price: 1999,
+                type: 'add-to-cart',
+                keyDifferentiators: ['Parent/Guardian contact details', 'Emergency contacts', 'Known medical conditions (allergies, chronic illnesses)', 'Emergency instructions for caregivers (securely displayed)', 'Secure and privacy-focused data access'],
+                ctaText: 'Add to Cart',
+                demoLink: 'https://example.com/zenora/demo/kids-qr',
+                reviews: [{ rating: 5, author: 'Parent P.', text: 'Invaluable for child safety. Highly recommend!' }]
+            },
+            {
+                id: 'luggage-safety-portal',
+                category: 'Portal',
+                subCategory: 'Portal',
+                title: 'Luggage Safety Portal',
+                description: 'Never lose your luggage again with our QR code tracking portal. A scannable QR on your luggage tag connects to your contact details, making lost baggage recovery simple and stress-free.',
+                shortDescription: 'QR portal for luggage tracking.',
+                image: 'https://placehold.co/400x300/fd7e14/ffffff?text=Luggage+QR',
+                price: 1799,
+                type: 'add-to-cart',
+                keyDifferentiators: ['Owner contact information', 'Optional travel itinerary details', 'Reward for return offer', 'Customizable return instructions'],
+                ctaText: 'Add to Cart',
+                demoLink: 'https://example.com/zenora/demo/luggage-qr',
+                reviews: [{ rating: 4, author: 'Traveler T.', text: 'Smart way to ensure luggage returns.' }]
+            },
+            {
+                id: 'real-estate-portal',
+                category: 'Portal',
+                subCategory: 'Portal',
+                title: 'Real-estate Portal',
+                description: 'Showcase your properties like never before. A dynamic portal for real estate professionals to feature listings, virtual tours, client testimonials, and agent profiles with ease.',
+                shortDescription: 'QR portal for real estate portfolios.',
+                image: 'https://placehold.co/400x300/007bff/ffffff?text=Real+Estate+QR',
+                price: 3899,
+                type: 'add-to-cart',
+                keyDifferentiators: ['Dynamic property listings with images/videos', 'Agent profile and contact information', 'Integration of virtual tour links', 'Client testimonials and success stories'],
+                ctaText: 'Add to Cart',
+                demoLink: 'https://example.com/zenora/demo/realestate-qr',
+                reviews: [{ rating: 5, author: 'Realtor R.', text: 'Helped me showcase properties effectively on the go.' }]
+            },
+            {
+                id: 'safety-older-people-portal',
+                category: 'Portal',
+        subCategory: 'Portal',
+                title: 'Safety for Older People Portal',
+                description: 'A lifeline for vulnerable individuals. A discreet, scannable QR on their smartwatch provides instant access to crucial medical history, emergency contacts, and care instructions for those with memory impairment, aiding safe returns.',
+                shortDescription: 'Safety QR for older people with memory loss.',
+                image: 'https://placehold.co/400x300/e83e8c/ffffff?text=Elderly+Safety+QR',
+                price: 3899,
+                type: 'add-to-cart',
+                keyDifferentiators: ['Emergency contacts (multiple)', 'Primary caregiver information', 'Known medical conditions and medications', 'Communication tips for interactors', 'Lost & Found instructions', 'Highly secure and privacy-focused platform'],
+                ctaText: 'Add to Cart',
+                demoLink: 'https://example.com/zenora/demo/elderly-safety-qr',
+                reviews: [{ rating: 5, author: 'Caregiver C.', text: 'An essential tool for managing care for loved ones.' }]
+            },
+            // 3) Digital and smart business card
+            {
+                id: 'digital-business-card-silver',
+                category: 'Digital & Smart Business Cards',
+                subCategory: 'Digital & Smart Business Cards',
+                title: 'Digital Business Card',
+                description: 'Go paperless with style. Your modern, digital business card for instant sharing of contact details, social links, and portfolio previews directly from your phone.',
+                shortDescription: 'Modern, paperless digital business card for instant sharing.',
+                image: 'https://placehold.co/400x300/6c757d/ffffff?text=Digital+Card',
+                price: 999,
+                type: 'add-to-cart',
+                keyDifferentiators: [
+                    'Minimalist, shareable digital profile.',
+                    'Contact info, social links, photo, company logo, short bio.',
+                    'One-time purchase, instant activation.',
+                    'Direct shareable link'
+                ],
+                ctaText: 'Add to Cart',
+                demoLink: 'https://example.com/zenora/demo/digital-card',
+                reviews: [
+                    { rating: 4, author: 'Networking Pro', text: 'Sleek design, very easy to share my details.' },
+                    { rating: 4, author: 'Sales Rep S.', text: 'Convenient for quick sharing during meetings.' }
+                ]
+            },
+            {
+                id: 'premium-business-card-printable',
+                category: 'Digital & Smart Business Cards',
+                subCategory: 'Digital & Smart Business Cards',
+                title: 'Premium Business Card',
+                description: 'Make a tangible impression. High-quality, custom-designed printable business cards that reflect your brand\'s professionalism and attention to detail. Note: Printing services not included.',
+                shortDescription: 'Custom-designed, high-quality printable business card file.',
+                image: 'https://placehold.co/400x300/ffc107/ffffff?text=Printable+Card',
+                price: 2499,
+                type: 'add-to-cart',
+                keyDifferentiators: [
+                    'Custom Print-Ready Design File (delivered digitally).',
+                    'Includes QR code design for any Zenora Portal.',
+                    'High-resolution graphics.',
+                    'Note: Printing services not included.'
+                ],
+                ctaText: 'Add to Cart',
+                demoLink: null,
+                reviews: [
+                    { rating: 5, author: 'Creative Studio', text: 'The design quality is top-notch, exactly what we needed!' }
+                ]
+            },
+            {
+                id: 'smart-business-card-with-web-portal',
+                category: 'Digital & Smart Business Cards',
+                subCategory: 'Digital & Smart Business Cards',
+                title: 'Smart Business Card with Web Portal',
+                description: 'The best of both worlds. A physical business card with an integrated QR code, seamlessly bridging your physical and digital presence for enhanced networking.',
+                shortDescription: 'Physical card with QR linking to a dedicated Zenora Portal.',
+                image: 'https://placehold.co/400x300/28a745/ffffff?text=Smart+Card+QR',
+                price: 3299,
+                type: 'add-to-cart',
+                keyDifferentiators: [
+                    'Custom physical card design (print-ready file).',
+                    'Integrated QR code linking to a dedicated Zenora Portal (e.g., Portal Plus equivalent).',
+                    'Enhanced networking capabilities.'
+                ],
+                ctaText: 'Add to Cart',
+                demoLink: 'https://example.com/zenora/demo/smart-card',
+                reviews: [
+                    { rating: 5, author: 'Event Organizer', text: 'Seamlessly combines digital and physical, brilliant!' },
+                    { rating: 5, author: 'Public Speaker P.', text: 'Leaves a lasting impression at events.' }
+                ]
+            },
+            {
+                id: 'nfc-business-cards',
+                category: 'Digital & Smart Business Cards',
+                subCategory: 'Digital & Smart Business Cards',
+                title: 'NFC Business Card',
+                description: 'Instant connections with a tap. Our NFC business cards allow for effortless sharing of your digital profile and contact information by simply tapping a compatible device.',
+                shortDescription: 'NFC-enabled physical card for tap-to-share info.',
+                image: 'https://placehold.co/400x3
